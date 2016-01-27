@@ -2,7 +2,7 @@
 The provided Plugin helps store merchants to redirect customers to the Paytm Payment Gateway when they choose Paytm as their payment method. After the customer has finished the transaction they are redirected back to an appropriate  page on the merchant site depending on the status of the transaction.
 
 # Opencart Plugin
-The Plugin consists of three folders – admin,catalog and system.
+The Plugin consists of three folders – admin, catalog and system.
 The admin folder consists of files that are responsible for Admin Panel configuration. Catalog has files that take care of the live site payment procedure. System folder has files that are utilized both by admin as well as catalog files.
 
 # Installation and Configuration
