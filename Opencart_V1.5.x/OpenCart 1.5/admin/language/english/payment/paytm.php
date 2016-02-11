@@ -14,7 +14,9 @@ $_['text_env_test']       = 'Test';
 $_['entry_merchant']     = 'Merchant ID:<br /><span class="help">Enter your merchant ID.</span>';
 $_['entry_merchantkey']  = 'Merchant Key:<br /><span class="help">Enter your merchant key.</span>';
 $_['entry_order_status'] = 'Order Status:';
-
+$_['entry_geo_zone'] = 'Geo Zones';
+$_['entry_total']        = 'Total:<br /><span class="help">The checkout total the order must reach before this payment method becomes active.</span>';
+$_['entry_sort_order']   = 'Sort Order:';
 $_['entry_status']       = 'Plugin Status:';
 $_['entry_website']       = 'Website name:<br /><span class="help">Enter your Website Name.</span>';
 $_['entry_industry']       = 'Industry Type:<br /><span class="help">Eg. Retail,Entertainment,etc.</span>';
