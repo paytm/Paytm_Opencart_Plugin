@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']      = 'Paytm Payments';
+$_['heading_title']      = 'Paytm Payment';
 
 // Text
 $_['text_payment']       = 'Payment';
@@ -28,6 +28,10 @@ $_['entry_checkstatus_help']  = 'Check Transaction Status on Paytm Server';
 $_['entry_environment']       = 'Environment';
 $_['entry_environment_help']       = 'Eg. Production/Test';
 
+$_['entry_total']	= 'Total';
+$_['entry_geo_zone']	= 'Geo Zone';
+$_['entry_sort_order']	= 'Sort Order';
+$_['help_total']	= 'The checkout total the order must reach before this payment method becomes active.';
 
 // Error
 $_['error_permission']   = 'Warning: You do not have permission to modify payment paytm!';

@@ -109,6 +109,35 @@
                 <?php } ?>
               </select></div>
 		  </div>
+            
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="input-total"><span data-toggle="tooltip" title="<?php echo $help_total; ?>"><?php echo $entry_total; ?></span></label>
+                <div class="col-sm-9">
+                  <input type="text" name="paytm_total" value="<?php echo $paytm_total; ?>" placeholder="<?php echo $entry_total; ?>" id="input-total" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="input-geo-zone"><?php echo $entry_geo_zone; ?></label>
+                <div class="col-sm-9">
+                    <select name="paytm_geo_zone_id" id="input-geo-zone" class="form-control">
+                      <option value="0"><?php echo $text_all_zones; ?></option>
+                      <?php foreach ($geo_zones as $geo_zone) { ?>
+                      <?php if ($geo_zone['geo_zone_id'] == $paytm_geo_zone_id) { ?>
+                      <option value="<?php echo $geo_zone['geo_zone_id']; ?>" selected="selected"><?php echo $geo_zone['name']; ?></option>
+                      <?php } else { ?>
+                      <option value="<?php echo $geo_zone['geo_zone_id']; ?>"><?php echo $geo_zone['name']; ?></option>
+                      <?php } ?>
+                      <?php } ?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="input-sort-order"><?php echo $entry_sort_order; ?></label>
+                <div class="col-sm-9">
+                  <input type="text" name="paytm_sort_order" value="<?php echo $paytm_sort_order; ?>" placeholder="<?php echo $entry_sort_order; ?>" id="input-sort-order" class="form-control" />
+                </div>
+            </div>
+            
 		  </form>
       </div>
     </div>

@@ -56,6 +56,11 @@ class ControllerPaymentpaytm extends Controller {
 		$data['entry_checkstatus_help'] = $this->language->get('entry_checkstatus_help');
 		$data['entry_environment'] = $this->language->get('entry_environment');
 		$data['entry_environment_help'] = $this->language->get('entry_environment_help');
+                $data['entry_total'] = $this->language->get('entry_total');
+                $data['help_total'] = $this->language->get('help_total');                
+		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
+		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
+
 
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
@@ -169,6 +174,32 @@ class ControllerPaymentpaytm extends Controller {
 		} else {
 			$data['paytm_environment'] = $this->config->get('paytm_environment');
 		}
+                
+                
+                if (isset($this->request->post['paytm_geo_zone_id'])) {
+			$data['paytm_geo_zone_id'] = $this->request->post['paytm_geo_zone_id'];
+		} else {
+			$data['paytm_geo_zone_id'] = $this->config->get('paytm_geo_zone_id');
+		}
+
+		$this->load->model('localisation/geo_zone');
+
+		$data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
+                
+                
+                if (isset($this->request->post['paytm_sort_order'])) {
+			$data['paytm_sort_order'] = $this->request->post['paytm_sort_order'];
+		} else {
+			$data['paytm_sort_order'] = $this->config->get('paytm_sort_order');
+		}
+                
+                
+                if (isset($this->request->post['paytm_total'])) {
+			$data['paytm_total'] = $this->request->post['paytm_total'];
+		} else {
+			$data['paytm_total'] = $this->config->get('paytm_total');
+		}
+
 
 		$this->template = 'payment/paytm.tpl';
 		$this->children = array(
