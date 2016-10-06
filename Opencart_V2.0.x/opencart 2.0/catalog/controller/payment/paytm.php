@@ -37,29 +37,37 @@ class ControllerPaymentpaytm extends Controller {
 			$data['mobile_no']= preg_replace('#[^0-9]{0,13}#is','',$order_info['telephone']);
 		}
 		
-		
 		if($this->config->get('paytm_environment') == "P") {
 			$data['action_url'] = $PAYTM_PAYMENT_URL_PROD;
 		} else {
 			$data['action_url'] = $PAYTM_PAYMENT_URL_TEST;
 		}
 		
+		if($_SERVER['HTTPS']){
+			$data['callback_url'] = HTTPS_SERVER .$callbackurl_tail_part; 
+		}else{
+			$data['callback_url'] = HTTP_SERVER .$callbackurl_tail_part; 
+		}
 		$parameters = array(
 							"MID" => $data['merchant'],
-              "ORDER_ID"  => $data['trans_id'],               
-              "CUST_ID" => $data['customer_id'],
-              "TXN_AMOUNT" => $data['amount'],
-              "CHANNEL_ID" => $data['channel_id'],
-              "INDUSTRY_TYPE_ID" => $data['industry_type_id'],
-              "WEBSITE" => $data['website'],
+							"ORDER_ID"  => $data['trans_id'],               
+							"CUST_ID" => $data['customer_id'],
+							"TXN_AMOUNT" => $data['amount'],
+							"CHANNEL_ID" => $data['channel_id'],
+							"INDUSTRY_TYPE_ID" => $data['industry_type_id'],
+							"WEBSITE" => $data['website'],							
 							"MOBILE_NO" => $data['mobile_no'],
-							"EMAIL" => $data['email']
-						);
-		
+							"EMAIL" => $data['email'],
+				);
+		if($this->config->get('paytm_callbackurl') == '1')
+		{
+			$parameters["CALLBACK_URL"] = $data['callback_url'];
+		}
 		
 		$mer = htmlspecialchars_decode(decrypt_e($this->config->get('paytm_key'),$const1),ENT_NOQUOTES);
 		$mer = rtrim($mer);
 		$data['checkSum'] = getChecksumFromArray($parameters, $mer);
+		$data['paytm_callbackurl'] = $this->config->get('paytm_callbackurl');
 		$data['callback'] = $this->url->link('payment/paytm/callback', '', 'SSL');
 		
 		

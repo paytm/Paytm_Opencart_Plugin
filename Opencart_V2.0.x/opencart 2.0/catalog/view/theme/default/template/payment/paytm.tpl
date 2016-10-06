@@ -8,9 +8,13 @@
 <input type='hidden' name='CHANNEL_ID' value="<?php echo $channel_id; ?>" />
 <input type='hidden' name='INDUSTRY_TYPE_ID' value="<?php echo $industry_type_id; ?>" />
 <input type='hidden' name='WEBSITE' value="<?php echo $website; ?>" />
+
+<?php if($paytm_callbackurl == '1') { ?>
+	<input type='hidden' name='CALLBACK_URL' value="<?php echo $callback_url; ?>" />
+<?php } ?>
+
 <input type='hidden' name='EMAIL' value="<?php echo $email; ?>" />
 <input type='hidden' name='MOBILE_NO' value="<?php echo $mobile_no; ?>" />
-
 </form>
 <div class="buttons">
   <div class="pull-right">
