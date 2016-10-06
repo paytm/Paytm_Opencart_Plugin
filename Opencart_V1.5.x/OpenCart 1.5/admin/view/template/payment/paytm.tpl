@@ -91,6 +91,19 @@
               </select></td>
           </tr>
 		  
+		  <tr>
+            <td><?php echo $callbackurl_status; ?></td>
+            <td><select name="paytm_callbackurl">
+                <?php if ($paytm_callbackurl) { ?>
+                <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+                <option value="0"><?php echo $text_disabled; ?></option>
+                <?php } else { ?>
+                <option value="1"><?php echo $text_enabled; ?></option>
+                <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                <?php } ?>
+              </select></td>
+          </tr>
+		  
 		  
 		  <tr>
 			<td><?php echo $entry_checkstatus; ?></td>
@@ -104,30 +117,8 @@
                 <?php } ?>
               </select></td>
 		  </tr>
-                  
-                  <tr>
-            <td><?php echo $entry_geo_zone; ?></td>
-            <td><select name="paytm_geo_zone_id">
-                <option value="0"><?php echo $text_all_zones; ?></option>
-                <?php foreach ($geo_zones as $geo_zone) { ?>
-                <?php if ($geo_zone['geo_zone_id'] == $paytm_geo_zone_id) { ?>
-                <option value="<?php echo $geo_zone['geo_zone_id']; ?>" selected="selected"><?php echo $geo_zone['name']; ?></option>
-                <?php } else { ?>
-                <option value="<?php echo $geo_zone['geo_zone_id']; ?>"><?php echo $geo_zone['name']; ?></option>
-                <?php } ?>
-                <?php } ?>
-              </select></td>
-          </tr>
-          
-          <tr>
-            <td><?php echo $entry_total; ?></td>
-            <td><input type="text" name="paytm_total" value="<?php echo $paytm_total; ?>" /></td>
-          </tr>
 		  
-          <tr>
-            <td><?php echo $entry_sort_order; ?></td>
-            <td><input type="text" name="paytm_sort_order" value="<?php echo $paytm_sort_order; ?>" size="1" /></td>
-          </tr>
+		  
 		  
         </table>
       </form>

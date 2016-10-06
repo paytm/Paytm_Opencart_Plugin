@@ -34,9 +34,7 @@ class ControllerPaymentpaytm extends Controller {
 		$this->data['text_enabled'] = $this->language->get('text_enabled');
 		$this->data['text_disabled'] = $this->language->get('text_disabled');
 		$this->data['text_all_zones'] = $this->language->get('text_all_zones');
-		$this->data['text_sort_order'] = $this->language->get('text_sort_order');
-		$this->data['text_order_total'] = $this->language->get('text_order_total');
-                $this->data['text_yes'] = $this->language->get('text_yes');
+		$this->data['text_yes'] = $this->language->get('text_yes');
 		$this->data['text_no'] = $this->language->get('text_no');
 		$this->data['text_live'] = $this->language->get('text_live');
 		$this->data['text_successful'] = $this->language->get('text_successful');
@@ -49,11 +47,8 @@ class ControllerPaymentpaytm extends Controller {
 		$this->data['entry_website'] = $this->language->get('entry_website');
 		$this->data['entry_industry'] = $this->language->get('entry_industry');
 		$this->data['entry_order_status'] = $this->language->get('entry_order_status');
-		$this->data['entry_total'] = $this->language->get('entry_total');
-		$this->data['entry_sort_order'] = $this->language->get('entry_sort_order');
-                $this->data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
-		
-                $this->data['entry_status'] = $this->language->get('entry_status');
+		$this->data['entry_status'] = $this->language->get('entry_status');
+		$this->data['callbackurl_status'] = $this->language->get('callbackurl_status');
 		$this->data['entry_checkstatus'] = $this->language->get('entry_checkstatus');
 		$this->data['entry_environment'] = $this->language->get('entry_environment');
 
@@ -64,12 +59,6 @@ class ControllerPaymentpaytm extends Controller {
 			$this->data['error_warning'] = $this->error['warning'];
 		} else {
 			$this->data['error_warning'] = '';
-		}
-                
-                if (isset($this->request->post['paytm_total'])) {
-			$this->data['paytm_total'] = $this->request->post['paytm_total'];
-		} else {
-			$this->data['paytm_total'] = $this->config->get('paytm_total'); 
 		}
 
 		if (isset($this->error['merchant'])) {
@@ -133,6 +122,7 @@ class ControllerPaymentpaytm extends Controller {
 		} else {
 			$this->data['paytm_merchant'] = $this->config->get('paytm_merchant');
 		}
+		
 		if (isset($this->request->post['paytm_website'])) {
 			$this->data['paytm_website'] = $this->request->post['paytm_website'];
 		} else {
@@ -154,12 +144,6 @@ class ControllerPaymentpaytm extends Controller {
 				$this->data['paytm_key'] = htmlspecialchars_decode(decrypt_e($this->config->get('paytm_key'),$const1),ENT_NOQUOTES);
 			}
 		}
-                
-                if (isset($this->request->post['paytm_sort_order'])) {
-			$this->data['paytm_sort_order'] = $this->request->post['paytm_sort_order'];
-		} else {
-			$this->data['paytm_sort_order'] = $this->config->get('paytm_sort_order');
-		}
 
 
 		if (isset($this->request->post['paytm_status'])) {
@@ -167,6 +151,12 @@ class ControllerPaymentpaytm extends Controller {
 		} else {
 			$this->data['paytm_status'] = $this->config->get('paytm_status');
 		}
+		if (isset($this->request->post['paytm_callbackurl'])) {
+			$this->data['paytm_callbackurl'] = $this->request->post['paytm_callbackurl'];
+		} else {
+			$this->data['paytm_callbackurl'] = $this->config->get('paytm_callbackurl');
+		}
+		
 		if (isset($this->request->post['paytm_checkstatus'])) {
 			$this->data['paytm_checkstatus'] = $this->request->post['paytm_checkstatus'];
 		} else {
@@ -178,16 +168,6 @@ class ControllerPaymentpaytm extends Controller {
 		} else {
 			$this->data['paytm_environment'] = $this->config->get('paytm_environment');
 		}
-                
-                if (isset($this->request->post['paytm_geo_zone_id'])) {
-			$this->data['paytm_geo_zone_id'] = $this->request->post['paytm_geo_zone_id'];
-		} else {
-			$this->data['paytm_geo_zone_id'] = $this->config->get('paytm_geo_zone_id'); 
-		} 
-
-		$this->load->model('localisation/geo_zone');
-
-		$this->data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
 
 		$this->template = 'payment/paytm.tpl';
 		$this->children = array(
