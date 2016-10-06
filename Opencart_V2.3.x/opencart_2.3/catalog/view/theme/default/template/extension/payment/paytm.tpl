@@ -11,6 +11,10 @@
 <input type='hidden' name='EMAIL' value="<?php echo $email; ?>" />
 <input type='hidden' name='MOBILE_NO' value="<?php echo $mobile_no; ?>" />
 
+<?php if($paytm_callbackurl == '1') { ?>
+	<input type='hidden' name='CALLBACK_URL' value="<?php echo $callback_url; ?>" />
+<?php } ?>
+
 </form>
 <div class="buttons">
   <div class="pull-right">

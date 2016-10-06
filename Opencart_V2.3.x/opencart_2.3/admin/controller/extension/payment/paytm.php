@@ -53,6 +53,7 @@ class ControllerExtensionPaymentpaytm extends Controller {
 		$data['entry_order_status'] = $this->language->get('entry_order_status');
 		$data['entry_status'] = $this->language->get('entry_status');
 		$data['entry_checkstatus'] = $this->language->get('entry_checkstatus');
+		$data['callbackurl_status'] = $this->language->get('callbackurl_status');
 		$data['entry_checkstatus_help'] = $this->language->get('entry_checkstatus_help');
 		$data['entry_environment'] = $this->language->get('entry_environment');
 		$data['entry_environment_help'] = $this->language->get('entry_environment_help');
@@ -142,6 +143,12 @@ class ControllerExtensionPaymentpaytm extends Controller {
 			$data['paytm_industry'] = $this->request->post['paytm_industry'];
 		} else {
 			$data['paytm_industry'] = $this->config->get('paytm_industry');
+		}
+		
+		if (isset($this->request->post['paytm_callbackurl'])) {
+			$data['paytm_callbackurl'] = $this->request->post['paytm_callbackurl'];
+		} else {
+			$data['paytm_callbackurl'] = $this->config->get('paytm_callbackurl');
 		}
 		
 		if (isset($this->request->post['paytm_key'])) {

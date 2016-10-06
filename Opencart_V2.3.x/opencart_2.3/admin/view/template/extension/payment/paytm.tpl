@@ -98,6 +98,19 @@
 		  
 		  
 		  <div class="form-group">
+            <label class="control-label col-sm-3" for="paytm_callbackurl"><?php echo $callbackurl_status; ?></label>
+            <div class="col-sm-9"><select name="paytm_callbackurl" class="form-control">
+                <?php if ($paytm_callbackurl) { ?>
+                <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+                <option value="0"><?php echo $text_disabled; ?></option>
+                <?php } else { ?>
+                <option value="1"><?php echo $text_enabled; ?></option>
+                <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                <?php } ?>
+              </select></div>
+          </div>
+		  
+		  <div class="form-group">
 			<label class="control-label col-sm-3" for="paytm_checkstatus"><span data-toggle="tooltip" title="<?php echo $entry_checkstatus_help; ?>"><?php echo $entry_checkstatus; ?></span></label>
 			<div class="col-sm-9"><select name="paytm_checkstatus" class="form-control">
 			<?php if ($paytm_checkstatus) { ?>

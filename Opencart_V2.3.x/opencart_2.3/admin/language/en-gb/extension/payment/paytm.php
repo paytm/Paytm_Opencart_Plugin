@@ -20,6 +20,7 @@ $_['entry_order_status'] = 'Order Status';
 $_['entry_status']       = 'Plugin Status';
 $_['entry_website']       = 'Website name';
 $_['entry_website_help']       = 'Enter your Website Name.';
+$_['callbackurl_status']       = 'CallBack URL Status';
 
 $_['entry_industry']       = 'Industry Type';
 $_['entry_industry_help']       = 'Eg. Retail,Entertainment,etc.';
