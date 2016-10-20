@@ -100,7 +100,7 @@ class ControllerPaymentpaytm extends Controller {
 		require_once(DIR_SYSTEM . 'encdec_paytm.php');
 		require_once(DIR_SYSTEM . 'paytm_constants.php');
 		$param = array();
-		foreach($_REQUEST as $key=>$value)
+		foreach($_POST as $key=>$value)
 		{
 		   	if($key != "route") {
 				$param[$key] = $_REQUEST[$key];
