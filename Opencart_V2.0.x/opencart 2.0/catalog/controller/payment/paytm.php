@@ -74,7 +74,7 @@ class ControllerPaymentpaytm extends Controller {
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paytm.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/template/payment/paytm.tpl', $data);
 		} else {
-			return $this->load->view('default/template/payment/paytm.tpl', $data);
+			return $this->load->view('payment/paytm.tpl', $data);
 		}
 	}
 	
@@ -139,7 +139,7 @@ class ControllerPaymentpaytm extends Controller {
 				if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paytm_success.tpl')) {
 					$this->template = $this->config->get('config_template') . '/template/payment/paytm_success.tpl';
 				} else {
-					$this->template = 'default/template/payment/paytm_success.tpl';
+					$this->template = 'payment/paytm_success.tpl';
 				}
 					
 				$this->children = array(
@@ -160,7 +160,7 @@ class ControllerPaymentpaytm extends Controller {
 				if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paytm_failure.tpl')) {
 					$this->template = $this->config->get('config_template') . '/template/payment/paytm_failure.tpl';
 				} else {
-					$this->template = 'default/template/payment/paytm_failure.tpl';
+					$this->template = 'payment/paytm_failure.tpl';
 				}
 				
 				$this->children = array(
