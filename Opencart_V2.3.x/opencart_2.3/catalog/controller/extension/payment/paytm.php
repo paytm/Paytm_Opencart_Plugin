@@ -129,31 +129,66 @@ class ControllerExtensionPaymentpaytm extends Controller {
 			
 			
 			if ($txnstatus && $isValidChecksum) {
-				$authStatus = true;
-							    
-				$this->load->model('checkout/order');
+				// Create an array having all required parameters for status query.
+				$requestParamList = array("MID" => $this->config->get('paytm_merchant') , "ORDERID" => $order_id);
 				
-					
-			  $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paytm_order_status_id'));
+				// Call the PG's getTxnStatus() function for verifying the transaction status.
 				
-				
-				$data['continue'] = $this->url->link('checkout/success');
-				if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm_success.tpl')) {
-					$this->template = $this->config->get('config_template') . '/template/extension/payment/paytm_success.tpl';
+				if($this->config->get('paytm_environment') == "P") {
+					$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/TXNSTATUS';
 				} else {
-					$this->template = 'extension/payment/paytm_success.tpl';
+					$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/TXNSTATUS';
 				}
+				$responseParamList = callAPI($check_status_url, $requestParamList);
+				if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST['TXNAMOUNT'])
+				{
+					$authStatus = true;
+									
+					$this->load->model('checkout/order');
 					
-				$this->children = array(
-					'common/column_left',
-					'common/column_right',
-					'common/content_top',
-					'common/content_bottom',
-					'common/footer',
-					'common/header'
-				);
-				
-				$this->response->setOutput($this->load->view($this->template,$data));
+						
+					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paytm_order_status_id'));
+					
+					
+					$data['continue'] = $this->url->link('checkout/success');
+					if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm_success.tpl')) {
+						$this->template = $this->config->get('config_template') . '/template/extension/payment/paytm_success.tpl';
+					} else {
+						$this->template = 'extension/payment/paytm_success.tpl';
+					}
+						
+					$this->children = array(
+						'common/column_left',
+						'common/column_right',
+						'common/content_top',
+						'common/content_bottom',
+						'common/footer',
+						'common/header'
+					);
+					
+					$this->response->setOutput($this->load->view($this->template,$data));
+				}
+				else{
+					$this->load->model('checkout/order');
+
+					$data['continue'] = $this->url->link('checkout/cart');
+					if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm_failure.tpl')) {
+						$this->template = $this->config->get('config_template') . '/template/extension/payment/paytm_failure.tpl';
+					} else {
+						$this->template = 'extension/payment/paytm_failure.tpl';
+					}
+					
+					$this->children = array(
+						'common/column_left',
+						'common/column_right',
+						'common/content_top',
+						'common/content_bottom',
+						'common/footer',
+						'common/header'
+					);
+		
+					$this->response->setOutput($this->load->view($this->template,$data));
+				}
 				
 			} else {
 				$this->load->model('checkout/order');
