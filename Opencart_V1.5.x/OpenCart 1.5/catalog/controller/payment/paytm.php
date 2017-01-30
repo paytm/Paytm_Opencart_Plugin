@@ -156,14 +156,37 @@ class ControllerPaymentpaytm extends Controller {
 
 				} 
 				else {
-					$this->model_checkout_order->confirm($order_id, $this->config->get('config_order_status_id'));
-					$this->model_checkout_order->update($order_id, $this->config->get('paytm_order_status_id'),'',false);
+					// Create an array having all required parameters for status query.
+					$requestParamList = array("MID" => $this->config->get('paytm_merchant') , "ORDERID" => $order_id);
 					
-					$this->data['continue'] = $this->url->link('checkout/success');
-					if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paytm_success.tpl')) {
-						$this->template = $this->config->get('config_template') . '/template/payment/paytm_success.tpl';
+					// Call the PG's getTxnStatus() function for verifying the transaction status.
+					
+					if($this->config->get('paytm_environment') == "P") {
+						$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/TXNSTATUS';
 					} else {
-						$this->template = 'default/template/payment/paytm_success.tpl';
+						$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/TXNSTATUS';
+					}
+					$responseParamList = callAPI($check_status_url, $requestParamList);
+					if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST['TXNAMOUNT'])
+					{
+						$this->model_checkout_order->confirm($order_id, $this->config->get('config_order_status_id'));
+						$this->model_checkout_order->update($order_id, $this->config->get('paytm_order_status_id'),'',false);
+						
+						$this->data['continue'] = $this->url->link('checkout/success');
+						if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paytm_success.tpl')) {
+							$this->template = $this->config->get('config_template') . '/template/payment/paytm_success.tpl';
+						} else {
+							$this->template = 'default/template/payment/paytm_success.tpl';
+						}
+					}
+					else
+					{
+						$this->data['continue'] = $this->url->link('checkout/cart');
+						if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paytm_failure.tpl')) {
+							$this->template = $this->config->get('config_template') . '/template/payment/paytm_failure.tpl';
+						} else {
+							$this->template = 'default/template/payment/paytm_failure.tpl';
+						}
 					}
 				}
 	
