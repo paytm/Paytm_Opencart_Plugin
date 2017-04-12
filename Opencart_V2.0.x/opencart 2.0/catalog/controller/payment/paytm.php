@@ -130,14 +130,22 @@ class ControllerPaymentpaytm extends Controller {
 				// Create an array having all required parameters for status query.
 				$requestParamList = array("MID" => $this->config->get('paytm_merchant') , "ORDERID" => $order_id);
 				
+				$mer = htmlspecialchars_decode(decrypt_e($this->config->get('paytm_key'),$const1),ENT_NOQUOTES);
+					
+				$mer = rtrim($mer);
+				
+				$StatusCheckSum = getChecksumFromArray($requestParamList, $mer);
+						
+				$requestParamList['CHECKSUMHASH'] = $StatusCheckSum;
+				
 				// Call the PG's getTxnStatus() function for verifying the transaction status.
 				
 				if($this->config->get('paytm_environment') == "P") {
-					$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/TXNSTATUS';
+					$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/getTxnStatus';
 				} else {
-					$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/TXNSTATUS';
+					$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/getTxnStatus';
 				}
-				$responseParamList = callAPI($check_status_url, $requestParamList);
+				$responseParamList = callNewAPI($check_status_url, $requestParamList);
 				if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST['TXNAMOUNT'])
 				{
 					$authStatus = true;
