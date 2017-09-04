@@ -1,0 +1,192 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-payment" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-payment" class="form-horizontal">
+          <div class="tab-content">   
+
+			<div class="form-group required">
+                  <label class="control-label col-sm-3" for="input-merchant-id"><span data-toggle="tooltip" title="{{ entry_merchant_help }}">{{ entry_merchant }}</span></label>
+                  <div class="col-sm-9"><input type="text" name="payment_paytm_merchant" value="{{ payment_paytm_merchant }}" class="form-control"/>
+                     {% if error_merchant %}
+                     <span class="error">{{ error_merchant }}</span>
+                     {% endif %}
+                  </div>
+               </div>
+			   
+			   
+			   <div class="form-group required">
+                  <label class="control-label col-sm-3" for="input-merchant-id"><span data-toggle="tooltip" title="{{ entry_merchant_private_key }}">{{ entry_merchantkey }}</span></label>
+                  <div class="col-sm-9"><input type="text" name="payment_paytm_merchant2" value="{{ payment_paytm_merchant2 }}" class="form-control"/>
+                     {% if error_merchant %}
+                     <span class="error">{{ error_merchant }}</span>
+                     {% endif %}
+                  </div>
+               </div>
+			   
+			   
+			   
+			   
+                <!--<div class="form-group required">
+                  <label class="control-label col-sm-3" for="payment_paytm_key"><span data-toggle="tooltip" title="{{ entry_merchant_private_key }}">{{ entry_merchantkey }}</span></label>
+                  <div class="col-sm-9"><input type="text" name="payment_paytm_key" value="{{ payment_paytm_key }}" class="form-control"/>              
+                     {% if error_key %}
+                     <span class="error">{{ error_key }}</span>
+                     {% endif %}
+                  </div>
+               </div>-->
+			   
+			   <div class="form-group required">
+                  <label class="control-label col-sm-3" for="payment_paytm_environment"><span data-toggle="tooltip" title="{{ entry_environment_help}}">{{ entry_environment }}</span></label>
+                  <div class="col-sm-9">
+                     <select name="payment_paytm_environment" class="form-control">
+                        {% if payment_paytm_environment == "P" %}
+                        <option value="P" selected="selected">{{ text_env_production }}</option>
+                        <option value="T">{{ text_env_test }}</option>
+                        {% else %}
+                        <option value="P">{{ text_env_production }}</option>
+                        <option value="T" selected="selected">{{ text_env_test }}</option>
+                        {% endif %}
+                     </select>
+                  </div>
+               </div>
+			   
+			   <div class="form-group required">
+                  <label class="control-label col-sm-3" for="payment_paytm_website"><span data-toggle="tooltip" title="{{ entry_website_help }}">{{ entry_website }}</span></label>
+                  <div class="col-sm-9"><input type="text" name="payment_paytm_website" value="{{ payment_paytm_website }}" class="form-control"/>
+                     {% if error_website %}
+                     <span class="error">{{ error_website }}</span>
+                     {% endif %}
+                  </div>
+               </div>
+			   
+			   <div class="form-group">
+                  <label class="control-label col-sm-3" for="payment_paytm_order_status_id">{{ entry_order_status }}</label>
+                  <div class="col-sm-9">
+                     <select name="payment_paytm_order_status_id" class="form-control">
+                        {% for order_status in order_statuses %}
+                        {% if order_status.order_status_id == payment_paytm_order_status_id %}
+                        <option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }} </option>
+                        {% else %}
+                        <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                     </select>
+                  </div>
+               </div>
+            
+            <div class="form-group">
+              <label class="col-sm-3 control-label" for="input-status">{{ entry_status }}</label>
+              <div class="col-sm-9">
+                <select name="payment_paytm_status" id="input-status" class="form-control">
+                  {% if payment_paytm_status %}
+                  <option value="1" selected="selected">{{ text_enabled }}</option>
+                  <option value="0">{{ text_disabled }}</option>
+                  {% else %}
+                  <option value="1">{{ text_enabled }}</option>
+                  <option value="0" selected="selected">{{ text_disabled }}</option>
+                  {% endif %}
+                </select>
+              </div>
+            </div>
+			
+			<div class="form-group required">
+                  <label class="control-label col-sm-3" for="payment_paytm_industry"><span data-toggle="tooltip" title="{{ entry_industry_help }}">{{ entry_industry }}</span></label>
+                  <div class="col-sm-9"><input type="text" name="payment_paytm_industry" value="{{ payment_paytm_industry }}" class="form-control"/>
+                     {% if error_industry %}              
+                     <span class="error">{{ error_industry }}</span>
+                     {% endif %}
+                  </div>
+               </div>
+			   
+			   
+			   <div class="form-group">
+                  <label class="control-label col-sm-3" for="payment_paytm_callbackurl">{{ callbackurl_status }}</label>
+                  <div class="col-sm-9">
+                     <select name="payment_paytm_callbackurl" class="form-control">
+                        {% if payment_paytm_callbackurl %}
+                        <option value="1" selected="selected">{{ text_enabled }}</option>
+                        <option value="0">{{ text_disabled }}</option>
+                        {% else %}
+                        <option value="1">{{ text_enabled }}</option>
+                        <option value="0" selected="selected">{{ text_disabled }}</option>
+                        {% endif %}
+                     </select>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="control-label col-sm-3" for="payment_paytm_checkstatus"><span data-toggle="tooltip" title="{{ entry_checkstatus_help}}">{{ entry_checkstatus }}</span></label>
+                  <div class="col-sm-9">
+                     <select name="payment_paytm_checkstatus" class="form-control">
+                        {% if payment_paytm_checkstatus %}
+                        <option value="1" selected="selected">{{ text_enabled }}</option>
+                        <option value="0">{{ text_disabled }}</option>
+                        {% else %}
+                        <option value="1">{{ text_enabled }}</option>
+                        <option value="0" selected="selected">{{ text_disabled }}</option>
+                        {% endif %}
+                     </select>
+                  </div>
+               </div>
+			   
+			   <div class="form-group">
+                  <label class="col-sm-3 control-label" for="input-total"><span data-toggle="tooltip" title="{{ help_total }}">{{ entry_total }}</span></label>
+                  <div class="col-sm-9">
+                     <input type="text" name="payment_paytm_total" value="{{ payment_paytm_total }}" placeholder="{{ entry_total }}" id="input-total" class="form-control" />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-sm-3 control-label" for="input-geo-zone">{{ entry_geo_zone }}</label>
+                  <div class="col-sm-9">
+                     <select name="payment_paytm_geo_zone_id" id="input-geo-zone" class="form-control">
+                        <option value="0">{{ text_all_zones }}</option>
+                        {% for geo_zone in geo_zones %}
+                        {% if geo_zone.geo_zone_id == payment_paytm_geo_zone_id %}
+                        <option value="{{ geo_zone.geo_zone_id }}" selected="selected">{{ geo_zone.name }}</option>
+                        {% else %}
+                        <option value="{{ geo_zone.geo_zone_id }}">{{ geo_zone.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                     </select>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label class="col-sm-3 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+                  <div class="col-sm-9">
+                     <input type="text" name="payment_paytm_sort_order" value="{{ payment_paytm_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+                  </div>
+               </div>
+			
+			
+			
+			
+
+          </div>
+        </form>        
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}
