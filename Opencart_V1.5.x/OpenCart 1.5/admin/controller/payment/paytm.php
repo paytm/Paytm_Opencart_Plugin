@@ -50,7 +50,9 @@ class ControllerPaymentpaytm extends Controller {
 		$this->data['entry_status'] = $this->language->get('entry_status');
 		$this->data['callbackurl_status'] = $this->language->get('callbackurl_status');
 		$this->data['entry_checkstatus'] = $this->language->get('entry_checkstatus');
-		$this->data['entry_environment'] = $this->language->get('entry_environment');
+		// $this->data['entry_environment'] = $this->language->get('entry_environment');
+		$this->data['entry_transaction_url'] = $this->language->get('entry_transaction_url');
+		$this->data['entry_transaction_url_status'] = $this->language->get('entry_transaction_url_status');
 
 		$this->data['button_save'] = $this->language->get('button_save');
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
@@ -163,10 +165,22 @@ class ControllerPaymentpaytm extends Controller {
 			$this->data['paytm_checkstatus'] = $this->config->get('paytm_checkstatus');
 		}
 
-		if (isset($this->request->post['paytm_environment'])) {
+		/*if (isset($this->request->post['paytm_environment'])) {
 			$this->data['paytm_environment'] = $this->request->post['paytm_environment'];
 		} else {
 			$this->data['paytm_environment'] = $this->config->get('paytm_environment');
+		}*/
+
+		if (isset($this->request->post['payment_paytm_transaction_url'])) {
+			$this->data['payment_paytm_transaction_url'] = $this->request->post['payment_paytm_transaction_url'];
+		} else {
+			$this->data['payment_paytm_transaction_url'] = $this->config->get('payment_paytm_transaction_url');
+		}
+
+		if (isset($this->request->post['payment_paytm_transaction_status_url'])) {
+			$this->data['payment_paytm_transaction_status_url'] = $this->request->post['payment_paytm_transaction_status_url'];
+		} else {
+			$this->data['payment_paytm_transaction_status_url'] = $this->config->get('payment_paytm_transaction_status_url');
 		}
 
 		$this->template = 'payment/paytm.tpl';

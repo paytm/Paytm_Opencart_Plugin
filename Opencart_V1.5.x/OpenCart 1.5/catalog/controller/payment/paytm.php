@@ -59,11 +59,12 @@ class ControllerPaymentpaytm extends Controller {
 		}
 		
 		
-		if($this->config->get('paytm_environment') == "P") {
+		/*if($this->config->get('paytm_environment') == "P") {
 			$this->data['action_url'] = $PAYTM_PAYMENT_URL_PROD;
 		} else {
 			$this->data['action_url'] = $PAYTM_PAYMENT_URL_TEST;
-		}
+		}*/
+		$this->data['action_url'] = $this->config->get('payment_paytm_transaction_url');
 		
 		$parameters = array(
 			   "MID" => $this->data['merchant'],
@@ -144,8 +145,8 @@ class ControllerPaymentpaytm extends Controller {
 				$this->load->model('checkout/order');
 
 				if ($authStatus == false) {
-// 					$this->model_checkout_order->confirm($order_id, $this->config->get('config_order_status_id'),$this->language->get('auth_query_mismatch'));
-// 					$this->model_checkout_order->update($order_id, 10,$this->language->get('auth_query_mismatch'),false);
+					// $this->model_checkout_order->confirm($order_id, $this->config->get('config_order_status_id'),$this->language->get('auth_query_mismatch'));
+					// $this->model_checkout_order->update($order_id, 10,$this->language->get('auth_query_mismatch'),false);
 					
 					$this->data['continue'] = $this->url->link('checkout/cart');
 					if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paytm_failure.tpl')) {
@@ -168,12 +169,20 @@ class ControllerPaymentpaytm extends Controller {
 					$requestParamList['CHECKSUMHASH'] = $StatusCheckSum;
 					
 					// Call the PG's getTxnStatus() function for verifying the transaction status.
-					
-					if($this->config->get('paytm_environment') == "P") {
-						$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/getTxnStatus';
-					} else {
-						$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/getTxnStatus';
-					}
+					/*	19751/17Jan2018	*/
+						/*if($this->config->get('paytm_environment') == "P") {
+							$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/getTxnStatus';
+						} else {
+							$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/getTxnStatus';
+						}*/
+
+						/*if($this->config->get('paytm_environment') == "P") {
+							$check_status_url = $STATUS_QUERY_URL_PROD;
+						} else {
+							$check_status_url = $STATUS_QUERY_URL_TEST;
+						}*/
+						$check_status_url = $this->config->get('payment_paytm_transaction_status_url');
+					/*	19751/17Jan2018 end	*/
 					$responseParamList = callNewAPI($check_status_url, $requestParamList);
 					if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST['TXNAMOUNT'])
 					{

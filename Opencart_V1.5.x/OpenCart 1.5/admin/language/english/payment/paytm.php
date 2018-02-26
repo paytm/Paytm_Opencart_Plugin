@@ -20,11 +20,15 @@ $_['callbackurl_status']       = 'CallBack URL Status';
 $_['entry_website']       = 'Website name:<br /><span class="help">Enter your Website Name.</span>';
 $_['entry_industry']       = 'Industry Type:<br /><span class="help">Eg. Retail,Entertainment,etc.</span>';
 $_['entry_checkstatus']  = 'Transaction Status:<br /><span class="help">Check Transaction Status on Paytm Server</span>';
-$_['entry_environment']       = 'Environment:<br /><span class="help">Eg. Production/Test</span>';
+// $_['entry_environment']       = 'Environment:<br /><span class="help">Eg. Production/Test</span>';
+$_['entry_transaction_url']       = 'Transaction URL:<br /><span class="help">Enter your transaction url.</span>';
+$_['entry_transaction_url_status']       = 'Transaction Status URL:<br /><span class="help">Enter your transaction status url.</span>';
 
 // Error
 $_['error_permission']   = 'Warning: You do not have permission to modify payment paytm!';
 $_['error_merchant']     = 'Merchant ID Required!';
+$_['error_transaction_url']     = 'Transaction URL Required!';
+$_['error_transaction_status_url']     		= 'Transaction Status URL Required!';
 $_['error_key']          = 'Merchant Key Required!';
 $_['error_industry']     = 'Industry Type Required!';
 

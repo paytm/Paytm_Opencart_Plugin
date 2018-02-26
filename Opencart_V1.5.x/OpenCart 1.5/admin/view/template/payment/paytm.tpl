@@ -33,18 +33,40 @@
               <span class="error"><?php echo $error_key; ?></span>
               <?php } ?></td>
           </tr>
-	  <tr>
-		<td><?php echo $entry_environment; ?></td>
-		<td><select name="paytm_environment">
-		<?php if ($paytm_environment == "P") { ?>
-                <option value="P" selected="selected"><?php echo $text_env_production; ?></option>
-                <option value="T"><?php echo $text_env_test; ?></option>
-                <?php } else { ?>
-                <option value="P"><?php echo $text_env_production; ?></option>
-                <option value="T" selected="selected"><?php echo $text_env_test; ?></option>
-                <?php } ?>
-              </select></td>
-	  </tr>
+      <!-- <tr>
+          <td><?php echo $entry_environment; ?></td>
+          <td>
+              <select name="paytm_environment">
+                  <?php if ($paytm_environment == "P") { ?>
+                      <option value="P" selected="selected"><?php echo $text_env_production; ?></option>
+                      <option value="T"><?php echo $text_env_test; ?></option>
+                  <?php } else { ?>
+                      <option value="P"><?php echo $text_env_production; ?></option>
+                      <option value="T" selected="selected"><?php echo $text_env_test; ?></option>
+                  <?php } ?>
+              </select>
+          </td>
+      </tr> -->
+
+      <tr>
+          <td><span class="required">*</span> <?php echo $entry_transaction_url; ?></td>
+          <td>
+              <input type="text" name="payment_paytm_transaction_url" value="<?php echo $payment_paytm_transaction_url; ?>" />
+              <?php if ($error_transaction_url) { ?>
+                  <span class="error"><?php echo $error_transaction_url; ?></span>
+              <?php } ?>
+          </td>
+      </tr>
+
+      <tr>
+          <td><span class="required">*</span> <?php echo $entry_transaction_url_status; ?></td>
+          <td>
+              <input type="text" name="payment_paytm_transaction_status_url" value="<?php echo $payment_paytm_transaction_status_url; ?>" />
+              <?php if ($error_transaction_status_url) { ?>
+                  <span class="error"><?php echo $error_transaction_status_url; ?></span>
+              <?php } ?>
+          </td>
+      </tr>
 		  
 		  <tr>
             <td><span class="required">*</span> <?php echo $entry_website; ?></td>
