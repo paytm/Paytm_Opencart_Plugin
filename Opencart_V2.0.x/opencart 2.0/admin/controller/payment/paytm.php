@@ -19,7 +19,7 @@ class ControllerPaymentpaytm extends Controller {
 			}
 			$arr[$key] = $value;
 		}
-		
+			
 		$this->load->model('setting/setting');
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
@@ -91,6 +91,18 @@ class ControllerPaymentpaytm extends Controller {
 			$data['error_industry'] = $this->error['industry'];
 		} else {
 			$data['error_industry'] = '';
+		}
+		
+		if (isset($this->error['error_transaction_url'])) {
+			$data['error_transaction_url'] = $this->error['error_transaction_url'];
+		} else {
+			$data['error_transaction_url'] = '';
+		}
+		
+		if (isset($this->error['error_transaction_status_url'])) {
+			$data['error_transaction_status_url'] = $this->error['error_transaction_status_url'];
+		} else {
+			$data['error_transaction_status_url'] = '';
 		}
 		
 		if (isset($this->request->post['paytm_order_status_id'])) {
@@ -180,16 +192,16 @@ class ControllerPaymentpaytm extends Controller {
 			$data['paytm_environment'] = $this->config->get('paytm_environment');
 		}*/
 
-		if (isset($this->request->post['payment_paytm_transaction_url'])) {
-			$data['payment_paytm_transaction_url'] = $this->request->post['payment_paytm_transaction_url'];
+		if (isset($this->request->post['paytm_transaction_url'])) {
+			$data['paytm_transaction_url'] = $this->request->post['paytm_transaction_url'];
 		} else {
-			$data['payment_paytm_transaction_url'] = $this->config->get('payment_paytm_transaction_url');
+			$data['paytm_transaction_url'] = $this->config->get('paytm_transaction_url');
 		}
 
-		if (isset($this->request->post['payment_paytm_transaction_status_url'])) {
-			$data['payment_paytm_transaction_status_url'] = $this->request->post['payment_paytm_transaction_status_url'];
+		if (isset($this->request->post['paytm_transaction_status_url'])) {
+			$data['paytm_transaction_status_url'] = $this->request->post['paytm_transaction_status_url'];
 		} else {
-			$data['payment_paytm_transaction_status_url'] = $this->config->get('payment_paytm_transaction_status_url');
+			$data['paytm_transaction_status_url'] = $this->config->get('paytm_transaction_status_url');
 		}
 
 		$this->template = 'payment/paytm.tpl';
