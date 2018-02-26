@@ -38,18 +38,36 @@
               <span class="error"><?php echo $error_key; ?></span>
               <?php } ?></div>
           </div>
-	  <div class="form-group required">
-		<label class="control-label col-sm-3" for="paytm_environment"><span data-toggle="tooltip" title="<?php echo $entry_environment_help; ?>"><?php echo $entry_environment; ?></span></label>
-		<div class="col-sm-9"><select name="paytm_environment" class="form-control">
-		<?php if ($paytm_environment == "P") { ?>
-                <option value="P" selected="selected"><?php echo $text_env_production; ?></option>
-                <option value="T"><?php echo $text_env_test; ?></option>
-                <?php } else { ?>
-                <option value="P"><?php echo $text_env_production; ?></option>
-                <option value="T" selected="selected"><?php echo $text_env_test; ?></option>
-                <?php } ?>
-              </select></div>
-	  </div>
+      <!-- <div class="form-group required">
+          <label class="control-label col-sm-3" for="paytm_environment"><span data-toggle="tooltip" title="<?php echo $entry_environment_help; ?>"><?php echo $entry_environment; ?></span></label>
+          <div class="col-sm-9"><select name="paytm_environment" class="form-control">
+              <?php if ($paytm_environment == "P") { ?>
+                  <option value="P" selected="selected"><?php echo $text_env_production; ?></option>
+                  <option value="T"><?php echo $text_env_test; ?></option>
+              <?php } else { ?>
+                  <option value="P"><?php echo $text_env_production; ?></option>
+                  <option value="T" selected="selected"><?php echo $text_env_test; ?></option>
+              <?php } ?>
+          </select></div>
+      </div> -->
+
+      <div class="form-group required">
+          <label class="control-label col-sm-3" for="paytm_key"><span data-toggle="tooltip" title="<?php echo $entry_transaction_url_help; ?>"><?php echo $entry_transaction_url; ?></span></label>
+          <div class="col-sm-9"><input type="text" name="payment_paytm_transaction_url" value="<?php echo $payment_paytm_transaction_url; ?>" class="form-control"/>
+              <?php if ($error_transaction_url) { ?>
+                  <span class="error"><?php echo $error_transaction_url; ?></span>
+              <?php } ?>
+          </div>
+      </div>
+
+      <div class="form-group required">
+          <label class="control-label col-sm-3" for="paytm_key"><span data-toggle="tooltip" title="<?php echo $entry_transaction_url_status_help; ?>"><?php echo $entry_transaction_url_status; ?></span></label>
+          <div class="col-sm-9"><input type="text" name="payment_paytm_transaction_status_url" value="<?php echo $payment_paytm_transaction_status_url; ?>" class="form-control"/>
+              <?php if ($error_transaction_status_url) { ?>
+                  <span class="error"><?php echo $error_transaction_status_url; ?></span>
+              <?php } ?>
+          </div>
+      </div>
 		  
 		  <div class="form-group required">
             <label class="control-label col-sm-3" for="paytm_website"><span data-toggle="tooltip" title="<?php echo $entry_website_help; ?>"><?php echo $entry_website; ?></span></label>

@@ -55,8 +55,12 @@ class ControllerExtensionPaymentpaytm extends Controller {
 		$data['entry_checkstatus'] = $this->language->get('entry_checkstatus');
 		$data['callbackurl_status'] = $this->language->get('callbackurl_status');
 		$data['entry_checkstatus_help'] = $this->language->get('entry_checkstatus_help');
-		$data['entry_environment'] = $this->language->get('entry_environment');
-		$data['entry_environment_help'] = $this->language->get('entry_environment_help');
+		/*$data['entry_environment'] = $this->language->get('entry_environment');
+		$data['entry_environment_help'] = $this->language->get('entry_environment_help');*/
+		$data['entry_transaction_url'] = $this->language->get('entry_transaction_url');
+		$data['entry_transaction_url_help'] = $this->language->get('entry_transaction_url_help');
+		$data['entry_transaction_url_status'] = $this->language->get('entry_transaction_url_status');
+		$data['entry_transaction_url_status_help'] = $this->language->get('entry_transaction_url_status_help');
                 $data['entry_total'] = $this->language->get('entry_total');
                 $data['help_total'] = $this->language->get('help_total');                
 		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
@@ -176,10 +180,22 @@ class ControllerExtensionPaymentpaytm extends Controller {
 			$data['paytm_checkstatus'] = $this->config->get('paytm_checkstatus');
 		}
 
-		if (isset($this->request->post['paytm_environment'])) {
+		/*if (isset($this->request->post['paytm_environment'])) {
 			$data['paytm_environment'] = $this->request->post['paytm_environment'];
 		} else {
 			$data['paytm_environment'] = $this->config->get('paytm_environment');
+		}*/
+
+		if (isset($this->request->post['payment_paytm_transaction_url'])) {
+			$data['payment_paytm_transaction_url'] = $this->request->post['payment_paytm_transaction_url'];
+		} else {
+			$data['payment_paytm_transaction_url'] = $this->config->get('payment_paytm_transaction_url');
+		}
+
+		if (isset($this->request->post['payment_paytm_transaction_status_url'])) {
+			$data['payment_paytm_transaction_status_url'] = $this->request->post['payment_paytm_transaction_status_url'];
+		} else {
+			$data['payment_paytm_transaction_status_url'] = $this->config->get('payment_paytm_transaction_status_url');
 		}
                 
                 
