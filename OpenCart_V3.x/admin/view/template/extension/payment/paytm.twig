@@ -27,14 +27,14 @@
         <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-payment" class="form-horizontal">
           <div class="tab-content">   
 
-			<div class="form-group required">
+              <div class="form-group required">
                   <label class="control-label col-sm-3" for="input-merchant-id"><span data-toggle="tooltip" title="{{ entry_merchant_help }}">{{ entry_merchant }}</span></label>
                   <div class="col-sm-9"><input type="text" name="payment_paytm_merchant" value="{{ payment_paytm_merchant }}" class="form-control"/>
-                     {% if error_merchant %}
-                     <span class="error">{{ error_merchant }}</span>
-                     {% endif %}
+                      {% if error_merchant %}
+                          <span class="error">{{ error_merchant }}</span>
+                      {% endif %}
                   </div>
-               </div>
+              </div>
 			   
 			   
 			   <div class="form-group required">
@@ -58,20 +58,47 @@
                   </div>
                </div>-->
 			   
-			   <div class="form-group required">
+              <!-- <div class="form-group required">
                   <label class="control-label col-sm-3" for="payment_paytm_environment"><span data-toggle="tooltip" title="{{ entry_environment_help}}">{{ entry_environment }}</span></label>
                   <div class="col-sm-9">
-                     <select name="payment_paytm_environment" class="form-control">
-                        {% if payment_paytm_environment == "P" %}
-                        <option value="P" selected="selected">{{ text_env_production }}</option>
-                        <option value="T">{{ text_env_test }}</option>
-                        {% else %}
-                        <option value="P">{{ text_env_production }}</option>
-                        <option value="T" selected="selected">{{ text_env_test }}</option>
-                        {% endif %}
-                     </select>
+                      <select name="payment_paytm_environment" class="form-control">
+                          {% if payment_paytm_environment == "P" %}
+                              <option value="P" selected="selected">{{ text_env_production }}</option>
+                              <option value="T">{{ text_env_test }}</option>
+                          {% else %}
+                              <option value="P">{{ text_env_production }}</option>
+                              <option value="T" selected="selected">{{ text_env_test }}</option>
+                          {% endif %}
+                      </select>
                   </div>
-               </div>
+              </div> -->
+
+              <div class="form-group required">
+                  <label class="control-label col-sm-3" for="input-merchant-id"><span data-toggle="tooltip" title="{{ entry_transaction_url_help }}">{{ entry_transaction_url }}</span></label>
+                  <div class="col-sm-9"><input type="text" name="payment_paytm_transaction_url" value="{{ payment_paytm_transaction_url }}" class="form-control"/>
+                      {% if error_merchant %}
+                          <span class="error">{{ error_transaction_url }}</span>
+                      {% endif %}
+                  </div>
+              </div>
+
+              <div class="form-group required">
+                  <label class="control-label col-sm-3" for="input-merchant-id"><span data-toggle="tooltip" title="{{ entry_transaction_url_status_help }}">{{ entry_transaction_url_status }}</span></label>
+                  <div class="col-sm-9"><input type="text" name="payment_paytm_transaction_status_url" value="{{ payment_paytm_transaction_status_url }}" class="form-control"/>
+                      {% if error_merchant %}
+                          <span class="error">{{ error_transaction_status_url }}</span>
+                      {% endif %}
+                  </div>
+              </div> 
+
+              <div class="form-group required">
+                  <label class="control-label col-sm-3" for="input-merchant-id"><span data-toggle="tooltip" title="{{ entry_merchant_private_key }}">{{ entry_merchantkey }}</span></label>
+                  <div class="col-sm-9"><input type="text" name="payment_paytm_merchant2" value="{{ payment_paytm_merchant2 }}" class="form-control"/>
+                      {% if error_merchant %}
+                          <span class="error">{{ error_merchant }}</span>
+                      {% endif %}
+                  </div>
+              </div>
 			   
 			   <div class="form-group required">
                   <label class="control-label col-sm-3" for="payment_paytm_website"><span data-toggle="tooltip" title="{{ entry_website_help }}">{{ entry_website }}</span></label>

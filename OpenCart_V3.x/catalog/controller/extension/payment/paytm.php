@@ -38,11 +38,12 @@ class ControllerExtensionPaymentpaytm extends Controller {
 		}
 		
 		
-		if($this->config->get('payment_paytm_environment') == "P") {
+		/*if($this->config->get('payment_paytm_environment') == "P") {
 			$data['action_url'] = $PAYTM_PAYMENT_URL_PROD;
 		} else {
 			$data['action_url'] = $PAYTM_PAYMENT_URL_TEST;
-		}
+		}*/
+		$data['action_url'] = $this->config->get('payment_paytm_transaction_url');
 		
 		if($_SERVER['HTTPS']){
 			$data['callback_url'] = HTTPS_SERVER .$callbackurl_tail_part; 
@@ -141,12 +142,20 @@ class ControllerExtensionPaymentpaytm extends Controller {
 				$requestParamList['CHECKSUMHASH'] = $StatusCheckSum;
 				
 				// Call the PG's getTxnStatus() function for verifying the transaction status.
-				
-				if($this->config->get('payment_paytm_environment') == "P") {
-					$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/getTxnStatus';
-				} else {
-					$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/getTxnStatus';
-				}
+				/*	19751/17Jan2018	*/
+					/*if($this->config->get('payment_paytm_environment') == "P") {
+						$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/getTxnStatus';
+					} else {
+						$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/getTxnStatus';
+					}*/
+
+					/*if($this->config->get('payment_paytm_environment') == "P") {
+						$check_status_url = $STATUS_QUERY_URL_PROD;
+					} else {
+						$check_status_url = $STATUS_QUERY_URL_TEST;
+					}*/
+					$check_status_url = $this->config->get('payment_paytm_transaction_status_url');
+				/*	19751/17Jan2018 end	*/
 				$responseParamList = callNewAPI($check_status_url, $requestParamList);
 				if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST['TXNAMOUNT'])
 				{

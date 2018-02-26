@@ -51,8 +51,12 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		$data['entry_merchantkey_help'] = $this->language->get('entry_merchantkey_help');
 		$data['entry_industry'] = $this->language->get('entry_industry');
 		$data['entry_industry_help'] = $this->language->get('entry_industry_help');
-		$data['entry_environment'] = $this->language->get('entry_environment');
-		$data['entry_environment_help'] = $this->language->get('entry_environment_help');
+		/*$data['entry_environment'] = $this->language->get('entry_environment');
+		$data['entry_environment_help'] = $this->language->get('entry_environment_help');*/
+		$data['entry_transaction_url'] = $this->language->get('entry_transaction_url');
+		$data['entry_transaction_url_help'] = $this->language->get('entry_transaction_url_help');
+		$data['entry_transaction_url_status'] = $this->language->get('entry_transaction_url_status');
+		$data['entry_transaction_url_status_help'] = $this->language->get('entry_transaction_url_status_help');
 		$data['entry_website'] = $this->language->get('entry_website');
 		$data['entry_website_help'] = $this->language->get('entry_website_help');
 		$data['entry_order_status'] = $this->language->get('entry_order_status');
@@ -163,10 +167,22 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 
 		
-		if (isset($this->request->post['payment_paytm_environment'])) {
+		/*if (isset($this->request->post['payment_paytm_environment'])) {
 			$data['payment_paytm_environment'] = $this->request->post['payment_paytm_environment'];
 		} else {
 			$data['payment_paytm_environment'] = $this->config->get('payment_paytm_environment');
+		}*/
+
+		if (isset($this->request->post['payment_paytm_transaction_url'])) {
+			$data['payment_paytm_transaction_url'] = $this->request->post['payment_paytm_transaction_url'];
+		} else {
+			$data['payment_paytm_transaction_url'] = $this->config->get('payment_paytm_transaction_url');
+		}
+
+		if (isset($this->request->post['payment_paytm_transaction_status_url'])) {
+			$data['payment_paytm_transaction_status_url'] = $this->request->post['payment_paytm_transaction_status_url'];
+		} else {
+			$data['payment_paytm_transaction_status_url'] = $this->config->get('payment_paytm_transaction_status_url');
 		}
 		
 		if (isset($this->request->post['payment_paytm_website'])) {
