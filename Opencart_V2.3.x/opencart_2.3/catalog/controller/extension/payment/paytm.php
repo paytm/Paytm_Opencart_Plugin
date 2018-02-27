@@ -43,7 +43,7 @@ class ControllerExtensionPaymentpaytm extends Controller {
 		} else {
 			$data['action_url'] = $PAYTM_PAYMENT_URL_TEST;
 		}*/
-		$data['action_url'] = $this->config->get('payment_paytm_transaction_url');
+		$data['action_url'] = $this->config->get('paytm_transaction_url');
 		
 		if($_SERVER['HTTPS']){
 			$data['callback_url'] = HTTPS_SERVER .$callbackurl_tail_part; 
@@ -154,7 +154,7 @@ class ControllerExtensionPaymentpaytm extends Controller {
 					} else {
 						$check_status_url = $STATUS_QUERY_URL_TEST;
 					}*/
-					$check_status_url = $this->config->get('payment_paytm_transaction_status_url');
+					$check_status_url = $this->config->get('paytm_transaction_status_url');
 				/*	19751/17Jan2018 end	*/
 				$responseParamList = callNewAPI($check_status_url, $requestParamList);
 				if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST['TXNAMOUNT'])
