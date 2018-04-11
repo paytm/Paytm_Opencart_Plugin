@@ -194,7 +194,7 @@ class ControllerExtensionPaymentpaytm extends Controller {
 					} else {
 						$this->template = 'extension/payment/paytm_failure';
 					}
-					
+					if(isset($this->session->data['order_id'])) unset($this->session->data['order_id']);
 					$this->children = array(
 						'common/column_left',
 						'common/column_right',
@@ -216,7 +216,7 @@ class ControllerExtensionPaymentpaytm extends Controller {
 				} else {
 					$this->template = 'extension/payment/paytm_failure';
 				}
-				
+				if(isset($this->session->data['order_id'])) unset($this->session->data['order_id']);
 				$this->children = array(
 					'common/column_left',
 					'common/column_right',

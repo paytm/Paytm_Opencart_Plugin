@@ -149,6 +149,9 @@ class ControllerPaymentpaytm extends Controller {
 					// $this->model_checkout_order->update($order_id, 10,$this->language->get('auth_query_mismatch'),false);
 					
 					$this->data['continue'] = $this->url->link('checkout/cart');
+					
+					if(isset($this->session->data['order_id'])) unset($this->session->data['order_id']);
+
 					if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paytm_failure.tpl')) {
 						$this->template = $this->config->get('config_template') . '/template/payment/paytm_failure.tpl';
 					} else {
@@ -199,6 +202,9 @@ class ControllerPaymentpaytm extends Controller {
 					else
 					{
 						$this->data['continue'] = $this->url->link('checkout/cart');
+
+						if(isset($this->session->data['order_id'])) unset($this->session->data['order_id']);
+						
 						if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paytm_failure.tpl')) {
 							$this->template = $this->config->get('config_template') . '/template/payment/paytm_failure.tpl';
 						} else {
@@ -206,7 +212,7 @@ class ControllerPaymentpaytm extends Controller {
 						}
 					}
 				}
-	
+				
 				$this->children = array(
 					'common/column_left',
 					'common/column_right',
@@ -219,22 +225,22 @@ class ControllerPaymentpaytm extends Controller {
 				
 			} else {
 				$this->load->model('checkout/order');
-// 				if ($isValidChecksum == false) {
-// 					$this->model_checkout_order->confirm($order_id, $this->config->get('config_order_status_id'), $this->language->get('checksum_mismatch'));
-// 					$this->model_checkout_order->update($order_id, 1,$this->language->get('checksum_mismatch'),false);
-// 				}
-// 				else if ($param['STATUS'] == "TXN_FAILURE") {
-// 					$message = 'Txn Failed';
-// 					$this->model_checkout_order->confirm($order_id, $this->config->get('config_order_status_id'),$messge);
-// 					$this->model_checkout_order->update($order_id, 10,$message,false);
-// 				}
+				/*if ($isValidChecksum == false) {
+					$this->model_checkout_order->confirm($order_id, $this->config->get('config_order_status_id'), $this->language->get('checksum_mismatch'));
+					$this->model_checkout_order->update($order_id, 1,$this->language->get('checksum_mismatch'),false);
+				}
+				else if ($param['STATUS'] == "TXN_FAILURE") {
+					$message = 'Txn Failed';
+					$this->model_checkout_order->confirm($order_id, $this->config->get('config_order_status_id'),$messge);
+					$this->model_checkout_order->update($order_id, 10,$message,false);
+				}*/
 				$this->data['continue'] = $this->url->link('checkout/cart');
 				if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paytm_failure.tpl')) {
 					$this->template = $this->config->get('config_template') . '/template/payment/paytm_failure.tpl';
 				} else {
 					$this->template = 'default/template/payment/paytm_failure.tpl';
 				}
-				
+				if(isset($this->session->data['order_id'])) unset($this->session->data['order_id']);
 				$this->children = array(
 					'common/column_left',
 					'common/column_right',
