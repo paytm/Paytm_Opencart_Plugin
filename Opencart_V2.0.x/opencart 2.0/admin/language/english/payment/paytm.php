@@ -1,46 +1,57 @@
 <?php
 // Heading
-$_['heading_title']      = 'Paytm Payments';
+$_['heading_title'] = 'Paytm Payments';
 
 // Text
-$_['text_payment']       = 'Payment';
-$_['text_success']       = 'Success: You have modified paytm account details!';
-$_['text_paytm']         = '<img src="view/image/payment/paytm.png" alt="Paytm" title="Paytm" style="border: 1px solid #EEEEEE;" />';
+$_['text_payment'] = 'Payment';
+$_['text_success'] = 'Success: You have modified paytm account details!';
+$_['text_paytm'] = '<img src="view/image/payment/paytm.png" alt="Paytm" title="Paytm" style="border: 1px solid #EEEEEE;" />';
 
-$_['text_env_production']       = 'Production';
-$_['text_env_test']       = 'Test';
 
 // Entry
-$_['entry_merchant']     = 'Merchant ID';
-$_['entry_merchant_help']     = 'Enter your merchant ID';
-$_['entry_merchantkey']  = 'Merchant Key';
-$_['entry_merchantkey_help']  = 'Enter your merchant key.';
+$_['entry_merchant_id'] = 'Merchant ID';
+$_['entry_merchant_id_help'] = 'Enter Your Merchant ID Provided By Paytm';
+
+$_['entry_merchant_key'] = 'Merchant Key';
+$_['entry_merchant_key_help'] = 'Enter Your Merchant Key Provided By Paytm';
+
+$_['entry_website'] = 'Website Name';
+$_['entry_website_help'] = 'Enter Your Website Name';
+
+$_['entry_industry_type'] = 'Industry Type';
+$_['entry_industry_type_help'] = 'Eg. Retail, Entertainment etc.';
+
+$_['entry_transaction_url'] = 'Transaction URL';
+$_['entry_transaction_url_help'] = 'Enter Transaction URL Provided By Paytm';
+
+$_['entry_transaction_status_url'] = 'Transaction Status URL';
+$_['entry_transaction_status_url_help'] = 'Enter Transaction Status URL Provided By Paytm';
+
+$_['entry_callback_url_status'] = 'Callback URL Status';
+
+$_['entry_callback_url'] = 'Callback URL';
+
+$_['entry_status'] = 'Paytm Payments';
 $_['entry_order_status'] = 'Order Status';
 
-$_['entry_status']       = 'Plugin Status';
-$_['callbackurl_status']       = 'CallBack URL Status';
-$_['entry_website']       = 'Website name';
-$_['entry_website_help']       = 'Enter your Website Name.';
+$_['entry_multi_currency_support'] = 'Multi Currency Support';
 
-$_['entry_industry']       = 'Industry Type';
-$_['entry_industry_help']       = 'Eg. Retail,Entertainment,etc.';
-$_['entry_checkstatus']  = 'Transaction Status';
-$_['entry_checkstatus_help']  = 'Check Transaction Status on Paytm Server';
-/*$_['entry_environment']       = 'Environment';
-$_['entry_environment_help']       = 'Eg. Production/Test';*/
-$_['entry_transaction_url']       	= 'Transaction URL';
-$_['entry_transaction_url_help']    = 'Enter your transaction url.';
-$_['entry_transaction_url_status']       	= 'Transaction Status URL';
-$_['entry_transaction_url_status_help']    = 'Enter your transaction status url.';
+$_['entry_multi_currency_support_disabled'] = 'Disabled';
+$_['entry_multi_currency_support_disabled_help'] = 'Paytm Payment option will be only available if customer\'s selected currency is INR';
+
+$_['entry_multi_currency_support_conversion'] = 'Conversion';
+$_['entry_multi_currency_support_conversion_help'] = 'Selected currency value will be converted to INR before going to Paytm Payment page. For this INR must be available in Currencies.';
+
+$_['entry_multi_currency_support_no_conversion'] = 'Same Amount';
+$_['entry_multi_currency_support_no_conversion_help'] = 'Customer will be charged with same amount without currency conversion. eg. USD 1 = INR 1';
 
 
 // Error
-$_['error_permission']   = 'Warning: You do not have permission to modify payment paytm!';
-$_['error_merchant']     = 'Merchant ID Required!';
-$_['error_transaction_url']     = 'Transaction URL Required!';
-$_['error_transaction_status_url']     		= 'Transaction Status URL Required!';
-$_['error_key']          = 'Merchant Key Required!';
-$_['error_industry']     = 'Industry Type Required!';
-
-$_['error_website']          = 'Website Name Required!';
-?>
+$_['error_permission'] = 'Warning: You do not have permission to modify Paytm Payment!';
+$_['error_merchant_id'] = 'Merchant ID Required!';
+$_['error_merchant_key'] = 'Merchant Key Required!';
+$_['error_website'] = 'Website Required!';
+$_['error_industry_type'] = 'Industry Type Required!';
+$_['error_transaction_url'] = 'Transaction URL Required!';
+$_['error_transaction_status_url'] = 'Transaction Status URL Required!';
+$_['error_callback_url'] = 'Callback URL Required!';
