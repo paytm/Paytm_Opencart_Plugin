@@ -41,7 +41,8 @@ class ControllerPaymentpaytm extends Controller {
 		 	//  if paytm multi currency support is set to conversion
 		 	if($this->config->get('paytm_multi_currency_support') == "1"){
 
-				$amount = $this->currency->convert($order_info['total'], $this->session->data['currency'], "INR");
+				// order total will always be in default currency
+				$amount = $this->currency->convert($order_info['total'], $this->config->get('config_currency'), "INR");
 			
 				$data["conversion_text"] = sprintf($this->language->get('conversion_text'), number_format($amount, '2', '.', ''), $display_amount);
 
