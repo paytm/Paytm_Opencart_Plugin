@@ -1,80 +1,97 @@
 <?php
-class ControllerExtensionPaymentpaytm extends Controller {
+class ControllerExtensionPaymentPaytm extends Controller {
+	
 	public function index() {
+	
 		require_once(DIR_SYSTEM . 'encdec_paytm.php');
-		require_once(DIR_SYSTEM . 'paytm_constants.php');
 		
 		$this->load->language('extension/payment/paytm');
-		$data['button_confirm'] = $this->language->get('button_confirm');
 		$this->load->model('extension/payment/paytm');
-		
 		$this->load->model('checkout/order');
     
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		
-		$data['merchant'] = $this->config->get('paytm_merchant');
-		
-		$data['trans_id'] = $this->session->data['order_id'];
-		$data['amount'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
-		$data['channel_id'] = "WEB";
-		$data['industry_type_id'] = $this->config->get('paytm_industry');;
-		$data['website'] = $this->config->get('paytm_website');
-		
-		if( ! empty($order_info['customer_id'])){
-			$data['customer_id'] = $order_info['customer_id'];
-		}else{
-			$data['customer_id'] = $order_info['email'];
+		$mobile_no = "";
+		if(isset($order_info['telephone'])){
+			$mobile_no = preg_replace('/\D/', '', $order_info['telephone']);
 		}
-		
-		$data['email']     =  '';
-		$data['mobile_no'] =  '';
-		
-		if(isset($data['email'])){
-			$data['email'] = $order_info['email'];
+
+		$cust_id = "";
+		$email = "";
+		if(isset($order_info['email']) && trim($order_info['email']) != ""){
+			$cust_id = $email = $order_info['email'];
+		} else if(isset($order_info['customer_id']) && trim($order_info['customer_id']) != ""){
+			$cust_id = $order_info['customer_id'];
 		}
+
+
+		// if customer's selected currency is not INR, then notify amount to customer before charging
+	 	$data["conversion_text"] = "";
+	 	
+	 	// amount without currency code
+		$org_amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
 		
-		if(isset($data['mobile_no'])){
-			$data['mobile_no']= preg_replace('#[^0-9]{0,13}#is','',$order_info['telephone']);
-		}
-		
-		
-		/*if($this->config->get('paytm_environment') == "P") {
-			$data['action_url'] = $PAYTM_PAYMENT_URL_PROD;
-		} else {
-			$data['action_url'] = $PAYTM_PAYMENT_URL_TEST;
-		}*/
-		$data['action_url'] = $this->config->get('paytm_transaction_url');
-		
-		if($_SERVER['HTTPS']){
-			$data['callback_url'] = HTTPS_SERVER .$callbackurl_tail_part; 
-		}else{
-			$data['callback_url'] = HTTP_SERVER .$callbackurl_tail_part; 
-		}
-		
+		// amount with currency code prefix
+		$display_amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], true);
+
+		if (strtoupper($this->session->data['currency']) !== "INR") {
+
+		 	$data["conversion_text"] = sprintf($this->language->get('conversion_text'), $org_amount, $display_amount);
+
+		 	// if INR is available and paytm multi currency support is set to conversion
+		 	if($this->currency->getId("INR") && $this->config->get('paytm_multi_currency_support') == "1"){
+
+				$amount = $this->currency->convert($order_info['total'], $this->session->data['currency'], "INR");
+			
+				$data["conversion_text"] = sprintf($this->language->get('conversion_text'), number_format($amount, '2', '.', ''), $display_amount);
+
+				// amount is already converted to INR, just need to format this in INR
+				$amount = $this->currency->format($amount, "INR", "1", false);
+			
+			} else {
+
+				$amount = $org_amount;
+			}
+
+	 	} else {
+
+	 		$amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
+	 	}
+
+
+	 	/*
+	 	** in case INR is not added in currency from admin, then $amount will be zero
+	 	** to handle such case, use no conversion flow here
+	 	*/
+	 	if($amount <= 0){
+		 	$amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
+
+		 	$data["conversion_text"] = sprintf($this->language->get('conversion_text'), $amount, $display_amount);
+	 	}
+
+
 		$parameters = array(
-							"MID" => $data['merchant'],
-              "ORDER_ID"  => $data['trans_id'],               
-              "CUST_ID" => $data['customer_id'],
-              "TXN_AMOUNT" => $data['amount'],
-              "CHANNEL_ID" => $data['channel_id'],
-              "INDUSTRY_TYPE_ID" => $data['industry_type_id'],
-              "WEBSITE" => $data['website'],
-							"MOBILE_NO" => $data['mobile_no'],
-							"EMAIL" => $data['email'],
+							"MID" => $this->config->get('paytm_merchant_id'),
+							"WEBSITE" => $this->config->get('paytm_website'),
+							"INDUSTRY_TYPE_ID" => $this->config->get('paytm_industry_type'),
+							"CALLBACK_URL" => $this->config->get('paytm_callback_url'),
+							"ORDER_ID"  => $this->session->data['order_id'],
+							"CHANNEL_ID" => "WEB",
+							"CUST_ID" => $cust_id,
+							"TXN_AMOUNT" => $amount,
+							"MOBILE_NO" => $mobile_no,
+							"EMAIL" => $email,
 						);
+
+		// $parameters["ORDER_ID"] = "RHL_".date("Ymd").'_'.$parameters["ORDER_ID"]; // just for testing
 		
-		if($this->config->get('paytm_callbackurl') == '1')
-		{
-			$parameters["CALLBACK_URL"] = $data['callback_url'];
-		}
-		$mer = htmlspecialchars_decode(decrypt_e($this->config->get('paytm_key'),$const1),ENT_NOQUOTES);
-		$mer = rtrim($mer);
-		$data['checkSum'] = getChecksumFromArray($parameters, $mer);
-		$data['paytm_callbackurl'] = $this->config->get('paytm_callbackurl');
-		$data['callback'] = $this->url->link('extension/payment/paytm/callback', '', 'SSL');
+		$parameters["CHECKSUMHASH"] = getChecksumFromArray($parameters, $this->config->get('paytm_merchant_key'));
+
+		$data['paytm_fields'] = $parameters;
+		$data['action'] = $this->config->get('paytm_transaction_url');
+		$data['button_confirm'] = $this->language->get('button_confirm');
 		
-		
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm.tpl')) {
+		if(file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/template/extension/payment/paytm.tpl', $data);
 		} else {
 			return $this->load->view('extension/payment/paytm.tpl', $data);
@@ -84,39 +101,31 @@ class ControllerExtensionPaymentpaytm extends Controller {
 	public function callback(){
 	
 		require_once(DIR_SYSTEM . 'encdec_paytm.php');
-		require_once(DIR_SYSTEM . 'paytm_constants.php');
-		$param = array();
-		foreach($_POST as $key=>$value)
-		{
-		   	if($key != "route") {
-				$param[$key] = $_POST[$key];
-		  	}
-		}
+
 		$isValidChecksum = false;
 		$txnstatus = false;
 		$authStatus = false;
-		$mer = htmlspecialchars_decode(decrypt_e($this->config->get('paytm_key'),$const1),ENT_NOQUOTES);
-		$mer = rtrim($mer);
-		if(isset($_POST['CHECKSUMHASH']))
-		{
+
+		if(isset($_POST['CHECKSUMHASH'])) {
 			$checksum = htmlspecialchars_decode($_POST['CHECKSUMHASH']);
-			$return = verifychecksum_e($param, $mer, $checksum);
+			$return = verifychecksum_e($_POST, $this->config->get("paytm_merchant_key"), $checksum);
 			if($return == "TRUE")
-			$isValidChecksum = true;
+				$isValidChecksum = true;
 		}
-		$order_id = $_POST['ORDERID'];	
+
+		$order_id = isset($_POST['ORDERID']) && !empty($_POST['ORDERID'])? $_POST['ORDERID'] : 0;
+		
+		// $order_id = str_replace("RHL_".date("Ymd")."_", "", $order_id); // just for testing
+
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($order_id);
 
-		
-		if( $param['STATUS'] == "TXN_SUCCESS") {
+		if(isset($_POST['STATUS']) && $_POST['STATUS'] == "TXN_SUCCESS") {
 			$txnstatus = true;
 		}
-		
-		
-		if ($order_info) 
-		{
-			
+
+		if ($order_info){
+
 			$this->language->load('extension/payment/paytm');
 			$data['title'] = sprintf($this->language->get('heading_title'), $this->config->get('config_name'));
 			$data['language'] = $this->language->get('code');
@@ -127,48 +136,29 @@ class ControllerExtensionPaymentpaytm extends Controller {
 			$data['text_success_wait'] = sprintf($this->language->get('text_success_wait'), $this->url->link('checkout/success'));
 			$data['text_failure'] = $this->language->get('text_failure');
 			$data['text_failure_wait'] = sprintf($this->language->get('text_failure_wait'), $this->url->link('checkout/cart'));
-			
-			
-			if ($txnstatus && $isValidChecksum) {
-				// Create an array having all required parameters for status query.
-				$requestParamList = array("MID" => $this->config->get('paytm_merchant') , "ORDERID" => $order_id);
-				
-				$mer = htmlspecialchars_decode(decrypt_e($this->config->get('paytm_key'),$const1),ENT_NOQUOTES);
-					
-				$mer = rtrim($mer);
-				
-				$StatusCheckSum = getChecksumFromArray($requestParamList, $mer);
-						
-				$requestParamList['CHECKSUMHASH'] = $StatusCheckSum;
-				
-				// Call the PG's getTxnStatus() function for verifying the transaction status.
-				/*	19751/17Jan2018	*/
-					/*if($this->config->get('paytm_environment') == "P") {
-						$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/getTxnStatus';
-					} else {
-						$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/getTxnStatus';
-					}*/
 
-					/*if($this->config->get('paytm_environment') == "P") {
-						$check_status_url = $STATUS_QUERY_URL_PROD;
-					} else {
-						$check_status_url = $STATUS_QUERY_URL_TEST;
-					}*/
-					$check_status_url = $this->config->get('paytm_transaction_status_url');
-				/*	19751/17Jan2018 end	*/
-				$responseParamList = callNewAPI($check_status_url, $requestParamList);
-				if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST['TXNAMOUNT'])
-				{
+			if ($txnstatus && $isValidChecksum) {
+				$reqParams = array(
+									"MID" => $this->config->get('paytm_merchant_id'),
+									"ORDERID" => $order_id
+								);
+				
+				// $reqParams["ORDERID"] = "RHL_".date("Ymd")."_".$reqParams["ORDERID"]; // just for testing
+
+				$reqParams['CHECKSUMHASH'] = getChecksumFromArray($reqParams, $this->config->get("paytm_merchant_key"));
+						
+				$resParams = callNewAPI($this->config->get('paytm_transaction_status_url'), $reqParams);
+
+				if($resParams['STATUS'] == 'TXN_SUCCESS' && $resParams['TXNAMOUNT'] == $_POST['TXNAMOUNT']) {
+					
 					$authStatus = true;
 									
 					$this->load->model('checkout/order');
-					
-						
 					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paytm_order_status_id'));
 					
-					
 					$data['continue'] = $this->url->link('checkout/success');
-					if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm_success.tpl')) {
+
+					if(file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm_success.tpl')) {
 						$this->template = $this->config->get('config_template') . '/template/extension/payment/paytm_success.tpl';
 					} else {
 						$this->template = 'extension/payment/paytm_success.tpl';
@@ -183,18 +173,22 @@ class ControllerExtensionPaymentpaytm extends Controller {
 						'common/header'
 					);
 					
-					$this->response->setOutput($this->load->view($this->template,$data));
-				}
-				else{
-					$this->load->model('checkout/order');
-
+					$this->response->setOutput($this->load->view($this->template, $data));
+				
+				} else {
+					
 					$data['continue'] = $this->url->link('checkout/cart');
-					if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm_failure.tpl')) {
+
+					if(file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm_failure.tpl')) {
 						$this->template = $this->config->get('config_template') . '/template/extension/payment/paytm_failure.tpl';
 					} else {
 						$this->template = 'extension/payment/paytm_failure.tpl';
 					}
-					if(isset($this->session->data['order_id'])) unset($this->session->data['order_id']);
+
+					// unset order id if it is set, so new order id could be generated by paytm for next txns
+					if(isset($this->session->data['order_id']))
+						unset($this->session->data['order_id']);
+
 					$this->children = array(
 						'common/column_left',
 						'common/column_right',
@@ -204,19 +198,23 @@ class ControllerExtensionPaymentpaytm extends Controller {
 						'common/header'
 					);
 		
-					$this->response->setOutput($this->load->view($this->template,$data));
+					$this->response->setOutput($this->load->view($this->template, $data));
 				}
 				
 			} else {
-				$this->load->model('checkout/order');
+
+				// unset order id if it is set, so new order id could be generated by paytm for next txns
+				if(isset($this->session->data['order_id']))
+					unset($this->session->data['order_id']);
 
 				$data['continue'] = $this->url->link('checkout/cart');
-				if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm_failure.tpl')) {
+
+				if(file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm_failure.tpl')) {
 					$this->template = $this->config->get('config_template') . '/template/extension/payment/paytm_failure.tpl';
 				} else {
 					$this->template = 'extension/payment/paytm_failure.tpl';
 				}
-				if(isset($this->session->data['order_id'])) unset($this->session->data['order_id']);
+				
 				$this->children = array(
 					'common/column_left',
 					'common/column_right',

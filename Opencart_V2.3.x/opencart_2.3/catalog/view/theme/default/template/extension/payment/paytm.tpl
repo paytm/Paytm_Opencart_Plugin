@@ -1,20 +1,10 @@
-<form action="<?php echo $action_url; ?>" method="POST" class="form-horizontal" id="paytm_form_redirect">
-  <input type="hidden" name="CHECKSUMHASH" value="<?php echo $checkSum; ?>" />
-
-<input type='hidden' name='MID' value="<?php echo $merchant; ?>"/>
-<input type='hidden' name='ORDER_ID' value="<?php echo $trans_id; ?>" />
-<input type='hidden' name='CUST_ID' value="<?php echo $customer_id; ?>"/>
-<input type='hidden' name='TXN_AMOUNT' value="<?php echo $amount; ?>" />
-<input type='hidden' name='CHANNEL_ID' value="<?php echo $channel_id; ?>" />
-<input type='hidden' name='INDUSTRY_TYPE_ID' value="<?php echo $industry_type_id; ?>" />
-<input type='hidden' name='WEBSITE' value="<?php echo $website; ?>" />
-<input type='hidden' name='EMAIL' value="<?php echo $email; ?>" />
-<input type='hidden' name='MOBILE_NO' value="<?php echo $mobile_no; ?>" />
-
-<?php if($paytm_callbackurl == '1') { ?>
-	<input type='hidden' name='CALLBACK_URL' value="<?php echo $callback_url; ?>" />
+<?php if (isset($conversion_text) && !empty($conversion_text)) { ?>
+  <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $conversion_text; ?></div>
 <?php } ?>
-
+<form action="<?php echo $action; ?>" method="POST" class="form-horizontal" id="paytm_form_redirect">
+	<?php foreach($paytm_fields as $k=>$v) { ?>
+	<input type="hidden" name="<?php echo $k; ?>" value="<?php echo $v; ?>" />
+	<?php } ?>
 </form>
 <div class="buttons">
   <div class="pull-right">
