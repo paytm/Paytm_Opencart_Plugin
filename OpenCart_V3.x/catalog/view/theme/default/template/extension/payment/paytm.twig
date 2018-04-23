@@ -1,25 +1,15 @@
-<form action="{{ action_url }}" method="POST" class="form-horizontal" id="paytm_form_redirect">
-  <input type="hidden" name="CHECKSUMHASH" value="{{ checkSum }}" />
-
-<input type='hidden' name='MID' value="{{ merchant }}"/>
-<input type='hidden' name='ORDER_ID' value="{{ trans_id }}" />
-<input type='hidden' name='CUST_ID' value="{{ customer_id }}"/>
-<input type='hidden' name='TXN_AMOUNT' value="{{ amount }}" />
-<input type='hidden' name='CHANNEL_ID' value="{{ channel_id }}" />
-<input type='hidden' name='INDUSTRY_TYPE_ID' value="{{ industry_type_id }}" />
-<input type='hidden' name='WEBSITE' value="{{ website }}" />
-<input type='hidden' name='EMAIL' value="{{ email }}" />
-<input type='hidden' name='MOBILE_NO' value="{{ mobile_no }}" />
-
-{% if paytm_callbackurl == '1' %}
-	<input type='hidden' name='CALLBACK_URL' value="{{ callback_url }}" />
+{% if conversion_text is defined and conversion_text is not empty %}
+  <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ conversion_text }}</div>
 {% endif %}
-
+<form action="{{ action }}" method="POST" class="form-horizontal" id="paytm_form_redirect">
+	{% for k, v in paytm_fields %}
+	<input type="hidden" name="{{ k }}" value="{{ v }}" />
+	{% endfor %}
 </form>
 <div class="buttons">
-  <div class="pull-right">
-    <input type="button" value="{{ button_confirm }}" id="button-confirm" class="btn btn-primary" />
-  </div>
+	<div class="pull-right">
+		<input type="button" value="{{ button_confirm }}" id="button-confirm" class="btn btn-primary" />
+	</div>
 </div>
 
 <script type="text/javascript"><!--
