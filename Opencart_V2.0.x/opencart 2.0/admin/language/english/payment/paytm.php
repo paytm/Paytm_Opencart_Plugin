@@ -27,7 +27,7 @@ $_['entry_transaction_url_help'] = 'Enter Transaction URL Provided By Paytm';
 $_['entry_transaction_status_url'] = 'Transaction Status URL';
 $_['entry_transaction_status_url_help'] = 'Enter Transaction Status URL Provided By Paytm';
 
-$_['entry_callback_url_status'] = 'Callback URL Status';
+$_['entry_callback_url_status'] = 'Custom Callback URL';
 
 $_['entry_callback_url'] = 'Callback URL';
 
