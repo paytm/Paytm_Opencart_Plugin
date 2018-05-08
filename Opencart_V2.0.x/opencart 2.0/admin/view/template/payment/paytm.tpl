@@ -161,6 +161,7 @@
 							</label>
 						</div>
 					</div>
+					<?php if(isset($last_updated) && !empty($last_updated)) echo $last_updated; ?>
 				</form>
 			</div>
 		</div>

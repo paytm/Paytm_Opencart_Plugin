@@ -237,7 +237,17 @@ class ControllerPaymentpaytm extends Controller {
 		} else {
 			$data['paytm_multi_currency_support'] = 1;
 		}
-		
+
+		$data['last_updated'] = "";
+		$path = DIR_SYSTEM . "/paytm_version.txt";
+		if(file_exists($path)){
+			$handle = fopen($path, "r");
+			if($handle !== false){
+				$date = fread($handle, 10); // i.e. DD-MM-YYYY or 25-04-2018
+				$data['last_updated'] = '<hr/><div class="text-center"><p>Last Updated: '. date("d F Y", strtotime($date)) .'</p></div>';
+			}
+		}
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
