@@ -16,11 +16,6 @@ class ControllerPaymentpaytm extends Controller {
 		$this->document->setTitle($this->language->get('heading_title'));
 			
 		$this->load->model('setting/setting');
-
-		// trim all values
-		foreach($this->request->post as &$v){
-			$v = trim($v);
-		}
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$this->model_setting_setting->editSetting('paytm', $this->request->post);
@@ -31,9 +26,14 @@ class ControllerPaymentpaytm extends Controller {
 		}
 
 		$data['heading_title'] = $this->language->get('heading_title');
+		
+		$data['tab_general'] = $this->language->get('tab_general');
+		$data['tab_order_status'] = $this->language->get('tab_order_status');
+		$data['tab_promo_code'] = $this->language->get('tab_promo_code');
 
 		$data['text_enabled'] = $this->language->get('text_enabled');
 		$data['text_disabled'] = $this->language->get('text_disabled');
+		$data['text_next'] = $this->language->get('text_next');
 
 
 		$data['text_successful'] = $this->language->get('text_successful');
@@ -63,22 +63,33 @@ class ControllerPaymentpaytm extends Controller {
 		$data['entry_callback_url'] = $this->language->get('entry_callback_url');
 		$data['entry_callback_url_help'] = $this->language->get('entry_callback_url_help');
 
-		$data['entry_order_status'] = $this->language->get('entry_order_status');
-		$data['entry_status'] = $this->language->get('entry_status');
+		$data['entry_order_success_status'] = $this->language->get('entry_order_success_status');
+		$data['entry_order_success_status_help'] = $this->language->get('entry_order_success_status_help');
+		
+		$data['entry_order_failed_status'] = $this->language->get('entry_order_failed_status');
+		$data['entry_order_failed_status_help'] = $this->language->get('entry_order_failed_status_help');
 
-		$data['entry_multi_currency_support'] = $this->language->get('entry_multi_currency_support');
-		
-		$data['entry_multi_currency_support_disabled'] = $this->language->get('entry_multi_currency_support_disabled');
-		$data['entry_multi_currency_support_disabled_help'] = $this->language->get('entry_multi_currency_support_disabled_help');
-		
-		$data['entry_multi_currency_support_conversion'] = $this->language->get('entry_multi_currency_support_conversion');
-		$data['entry_multi_currency_support_conversion_help'] = $this->language->get('entry_multi_currency_support_conversion_help');
-		
-		$data['entry_multi_currency_support_no_conversion'] = $this->language->get('entry_multi_currency_support_no_conversion');
-		$data['entry_multi_currency_support_no_conversion_help'] = $this->language->get('entry_multi_currency_support_no_conversion_help');
-		
+		$data['entry_status'] = $this->language->get('entry_status');
+		$data['entry_status_help'] = $this->language->get('entry_status_help');
+
+
+		$data['entry_promo_code'] = $this->language->get('entry_promo_code');
+		$data['entry_promo_code_help1'] = $this->language->get('entry_promo_code_help1');
+		$data['entry_promo_code_status'] = $this->language->get('entry_promo_code_status');
+		$data['entry_promo_code_status_help1'] = $this->language->get('entry_promo_code_status_help1');
+		$data['entry_promo_code_availability'] = $this->language->get('entry_promo_code_availability');
+		$data['entry_promo_code_validation'] = $this->language->get('entry_promo_code_validation');
+		$data['entry_promo_code_validation_help1'] = $this->language->get('entry_promo_code_validation_help1');
+		$data['entry_promo_code_validation_help2'] = $this->language->get('entry_promo_code_validation_help2');
+
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
+
+		$data['button_promo_code_add'] = $this->language->get('button_promo_code_add');
+		$data['button_promo_code_remove'] = $this->language->get('button_promo_code_remove');
+		$data['entry_promo_code_start_date'] = $this->language->get('entry_promo_code_start_date');
+		$data['entry_promo_code_end_date'] = $this->language->get('entry_promo_code_end_date');
+
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -131,6 +142,12 @@ class ControllerPaymentpaytm extends Controller {
 			$data['error_callback_url'] = $this->error['callback_url'];
 		} else {
 			$data['error_callback_url'] = '';
+		}
+
+		if (isset($this->error['promo_codes'])) {
+			$data['error_promo_codes'] = $this->error['promo_codes'];
+		} else {
+			$data['error_promo_codes'] = array();
 		}
 
 		
@@ -218,10 +235,16 @@ class ControllerPaymentpaytm extends Controller {
 		}
 
 
-		if (isset($this->request->post['paytm_order_status_id'])) {
-			$data['paytm_order_status_id'] = $this->request->post['paytm_order_status_id'];
+		if (isset($this->request->post['paytm_order_success_status_id'])) {
+			$data['paytm_order_success_status_id'] = $this->request->post['paytm_order_success_status_id'];
 		} else {
-			$data['paytm_order_status_id'] = $this->config->get('paytm_order_status_id');
+			$data['paytm_order_success_status_id'] = $this->config->get('paytm_order_success_status_id');
+		}
+
+		if (isset($this->request->post['paytm_order_failed_status_id'])) {
+			$data['paytm_order_failed_status_id'] = $this->request->post['paytm_order_failed_status_id'];
+		} else {
+			$data['paytm_order_failed_status_id'] = $this->config->get('paytm_order_failed_status_id');
 		}
 
 		if (isset($this->request->post['paytm_status'])) {
@@ -230,23 +253,45 @@ class ControllerPaymentpaytm extends Controller {
 			$data['paytm_status'] = $this->config->get('paytm_status');
 		}
 
-		if (isset($this->request->post['paytm_multi_currency_support'])) {
-			$data['paytm_multi_currency_support'] = $this->request->post['paytm_multi_currency_support'];
-		} else if($this->config->get('paytm_multi_currency_support') !== null){
-			$data['paytm_multi_currency_support'] = $this->config->get('paytm_multi_currency_support');
+
+		if (isset($this->request->post['paytm_promo_code_status'])) {
+			$data['paytm_promo_code_status'] = $this->request->post['paytm_promo_code_status'];
+		} else if($this->config->get('paytm_promo_code_status') != null) {
+			$data['paytm_promo_code_status'] = $this->config->get('paytm_promo_code_status');
 		} else {
-			$data['paytm_multi_currency_support'] = 1;
+			// keep this disable at fresh installation
+			$data['paytm_promo_code_status'] = "0";
+		}		
+
+		if (isset($this->request->post['paytm_promo_code_validation'])) {
+			$data['paytm_promo_code_validation'] = $this->request->post['paytm_promo_code_validation'];
+		} else if($this->config->get('paytm_promo_code_validation') != null) {
+			$data['paytm_promo_code_validation'] = $this->config->get('paytm_promo_code_validation');
+		} else {
+			// keep this enable at fresh installation
+			$data['paytm_promo_code_validation'] = "1";
 		}
 
-		$data['last_updated'] = "";
+		if (isset($this->request->post['paytm_promo_codes'])) {
+			$data['paytm_promo_codes'] = $this->request->post['paytm_promo_codes'];
+		} else if($this->config->get('paytm_promo_codes')) {
+			$data['paytm_promo_codes'] = $this->config->get('paytm_promo_codes');
+		} else {
+			$data['paytm_promo_codes'] = array();
+		}
+
+		$last_updated = "";
 		$path = DIR_SYSTEM . "/paytm_version.txt";
 		if(file_exists($path)){
 			$handle = fopen($path, "r");
 			if($handle !== false){
 				$date = fread($handle, 10); // i.e. DD-MM-YYYY or 25-04-2018
-				$data['last_updated'] = '<hr/><div class="text-center"><p>Last Updated: '. date("d F Y", strtotime($date)) .'</p></div>';
+				$last_updated = '<p>Last Updated: '. date("d F Y", strtotime($date)) .'</p>';
 			}
 		}
+
+		$data['footer_text'] = '<div class="text-center">'.$last_updated.'<p>'.$this->language->get('text_opencart_version').': '.VERSION.'</p></div>';
+
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -258,6 +303,31 @@ class ControllerPaymentpaytm extends Controller {
 	protected function validate() {
 		if (!$this->user->hasPermission('modify', 'payment/paytm')) {
 			$this->error['warning'] = $this->language->get('error_permission');
+		}
+
+		// trim all values except for Promo Codes
+		foreach($this->request->post as $key=>&$val){
+			if($key == "paytm_promo_codes"){
+				foreach($val as $k=>&$code) {
+					$v["code"] = trim($code["code"]);
+					if($code["code"] == ""){
+						$this->error['promo_codes'][$k]['promo_code'] = $this->language->get('error_promo_code');
+					}
+
+					if($code["start_date"] == ""){
+						$this->error['promo_codes'][$k]['start_date'] = $this->language->get('error_start_date');
+					}
+
+					if($code["end_date"] == ""){
+						$this->error['promo_codes'][$k]['end_date'] = $this->language->get('error_end_date');
+					} else if(strtotime($code["end_date"]) < strtotime($code["start_date"])){
+						$this->error['promo_codes'][$k]['end_date'] = $this->language->get('error_invalid_end_date');
+					}
+	
+				}
+			} else {
+				$val = trim($val);
+			}
 		}
 
 		if (!$this->request->post['paytm_merchant_id']) {

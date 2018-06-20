@@ -12,4 +12,3 @@ $_['text_failure'] = '... Your payment has been cancelled!';
 $_['text_failure_wait'] = '<b><span style="color: #FF0000">Please wait...</span></b><br>If you are not automatically re-directed in 10 seconds, please click <a href="%s">here</a>.';		
 $_['checksum_mismatch'] = 'Checksum mismatch. Verify the transaction status from Paytm gateway.';
 $_['auth_query_mismatch'] = 'Txn status & amount mismatch in auth query.';
-$_['conversion_text'] = 'Paytm only support INR. You will be charged INR %s (%s) for this order.';
