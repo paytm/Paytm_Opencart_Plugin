@@ -285,21 +285,35 @@ class ControllerExtensionPaymentPaytm extends Controller {
 				$server = $this->request->server['HTTPS']? HTTPS_SERVER : HTTP_SERVER;
 
 				$testing_urls = array(
-												$server,
-												"www.google.co.in",
-												$this->config->get('paytm_transaction_status_url')
-											);
+											array(
+												"url" => $server,
+												"ssl" => false,
+											),
+											array(
+												"url" => "www.google.co.in",
+												"ssl" => false,
+											),
+											array(
+												"url" => $this->config->get('paytm_transaction_status_url'),
+												"ssl" => CURL_SSLVERSION_TLSv1_0, // TLS 1.2 or above required
+											)
+										);
 			}
 
 			// loop over all URLs, maintain debug log for each response received
-			foreach($testing_urls as $key=>$url){
+			foreach($testing_urls as $key=>$val){
 
-				$debug[$key]["info"][] = "Connecting to <b>" . $url . "</b> using cURL";
+				$debug[$key]["info"][] = "Connecting to <b>" . $val["url"] . "</b> using cURL";
 
-				$ch = curl_init($url);
+				$ch = curl_init($val["url"]);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-				$res = curl_exec($ch);
 
+				if($val["ssl"]){
+					curl_setopt($ch, CURLOPT_SSLVERSION, $val["ssl"]);
+				}
+
+				$res = curl_exec($ch);
+				
 				if (!curl_errno($ch)) {
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					$debug[$key]["info"][] = "cURL executed succcessfully.";
