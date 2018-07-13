@@ -295,7 +295,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 											),
 											array(
 												"url" => $this->config->get('paytm_transaction_status_url'),
-												"ssl" => CURL_SSLVERSION_TLSv1_0, // TLS 1.2 or above required
+												"ssl" => CURL_SSLVERSION_TLSv1_2, // TLS 1.2 or above required
 											)
 										);
 			}
