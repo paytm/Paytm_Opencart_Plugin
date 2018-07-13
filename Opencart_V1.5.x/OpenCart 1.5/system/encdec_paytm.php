@@ -151,21 +151,29 @@ function callAPI($apiURL, $requestParamList)
 }
 
 function callNewAPI($apiURL, $requestParamList) {
-	$jsonResponse = "";
 	$responseParamList = array();
-	$JsonData =json_encode($requestParamList);
+	$JsonData = json_encode($requestParamList);
 	$postData = 'JsonData='.urlencode($JsonData);
 	$ch = curl_init($apiURL);
-	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);                                                                  
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-	curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);
-	curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                         
-	'Content-Type: application/json', 
-	'Content-Length: ' . strlen($postData))                                                                       
-	);  
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+	
+	/*
+	** default value is 2 and we also want to use 2
+	** so no need to specify since older PHP version might not support 2 as valid value
+	** see https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYHOST.html
+	*/
+	// curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 2);
+
+	// TLS 1.2 or above required
+	curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
+
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		'Content-Type: application/json', 
+		'Content-Length: ' . strlen($postData))
+	);
 	$jsonResponse = curl_exec($ch);   
-	$responseParamList = json_decode($jsonResponse,true);
-	return $responseParamList;
+	return json_decode($jsonResponse, true);
 }
