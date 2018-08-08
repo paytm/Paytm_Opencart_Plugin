@@ -22,7 +22,7 @@ The admin folder consists of files that are responsible for Admin Panel configur
       * Industry type           - provided by Paytm
       * Transaction URL         
         * Staging     - https://securegw-stage.paytm.in/theia/processTransaction
-        * Production  - https://securegw.paytm.in/theia/processTransactionTransaction
+        * Production  - https://securegw.paytm.in/theia/processTransaction
       * Transaction Status URL  
         * Staging     - https://securegw-stage.paytm.in/merchant-status/getTxnStatus
         * Production  - https://securegw.paytm.in/merchant-status/getTxnStatus
