@@ -63,4 +63,6 @@ The admin folder consists of files that are responsible for Admin Panel configur
 
   9. Your Opencart plug-in is now installed. You can accept payment through Paytm.
 
+See Video : https://www.youtube.com/watch?v=ccXjwA5pKfA
+
 # In case of any query, please contact to Paytm.
