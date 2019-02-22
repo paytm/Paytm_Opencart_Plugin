@@ -19,6 +19,16 @@
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
 		</div>
 		{% endif %}
+		{% if curl_version == '' %}
+		<div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> {{ text_curl_disabled }}
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %}
+		{% if warning %}
+		<div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> {{ warning }}
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %}
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-paytm" class="form-horizontal">
@@ -321,7 +331,15 @@
 			</div>
 
 			<div class="panel-footer">
-				{% if footer_text %} {{ footer_text }} {% endif %}
+				<div class="text-center">
+					<span><b>{{text_php_version}}</b> {{ php_version }}</span>
+					<span> | </span>
+					<span><b>{{text_curl_version}}</b> {{ curl_version }}</span>
+					<span> | </span>
+					<span><b>{{text_opencart_version}}</b> {{ opencart_version }}</span>
+					<span> | </span>
+					<span><b>{{text_last_updated}}</b> {{ last_updated }}</span>
+				</div>
 			</div>
 		</div>
 	</div>
