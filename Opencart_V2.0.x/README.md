@@ -19,7 +19,7 @@ This plugin adds the Paytm payment option on checkout and enables you to accept 
 ## Installation
 
 ### Using Installer
-1. Download [**paytm_v2.x.ocmod.zip**][1_link]
+1. Download [**paytm_v2.0.ocmod.zip**][1_link]
 1. Go to the Opencart administration page [http://www.example.com/admin].
 1. Go to **Extensions** > **Extension Installer**.
 1. Click on **Upload** button, Select the downloaded file (STEP 1) then Click on **Continue** button and wait for process complete

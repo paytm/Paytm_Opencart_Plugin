@@ -76,7 +76,6 @@ The below table describes the configurable parameters and helps you to set their
 
 
 <!--external links:-->
-[1_link]: 
 [2_link]: http://php.net/manual/en/book.curl.php
 
 <!--images:-->
