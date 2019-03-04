@@ -86,7 +86,7 @@ The below table describes the configurable parameters and helps you to set their
 
 
 <!--external links:-->
-[1_link]: paytm_v2.x.ocmod.zip
+[1_link]: paytm_v2.0.ocmod.zip
 [2_link]: http://php.net/manual/en/book.curl.php
 
 <!--images:-->
