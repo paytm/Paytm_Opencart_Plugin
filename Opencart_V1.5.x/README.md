@@ -1,38 +1,82 @@
-# Introduction
-The provided Plugin helps store merchants to redirect customers to the Paytm Payment Gateway when they choose Paytm as their payment method. After the customer has finished the transaction they are redirected back to an appropriate  page on the merchant site depending on the status of the transaction.
+# Paytm Payment plugin for Opencart version 1.5.x
 
-# Opencart Plugin
-The Plugin consists of three folders – admin, catalog and system.
-The admin folder consists of files that are responsible for Admin Panel configuration. Catalog has files that take care of the live site payment procedure. System folder has files that are utilized both by admin as well as catalog files.
+## Table of Contents
+- [Overview][0]<br/>
+- [Prerequisites][1] <br />
+- [Installation][2]<br />
+- [Configuration][3]<br />
+    - [Configuration Parameters][3.1]
 
-# Installation and Configuration
-  1. Download the plugin.
-  2. Extract the file for the desired version of Opencart plug-in
-  3. Extract all three folders- admin, catalog & systems. You will be prompted with the warning that you are to overwrite files, click yes to copy plug-in. Your original source code will not be changed due to this activity.
-  4. Paste these folders into root folder of your Opencart website.
-  5. Login to Admin panel
-  6. Go to the Payments tab under Extensions.
-  7. Enable the Paytm option
-  8. Save the below configuration
-      
-      * Plugin status           - Enabled
-      * Order Status            - Processing
-      * Title                   - Paytm PG
-      * Merchant ID             - Staging/Production MID provided by Paytm
-      * Merchant Key            - Staging/Production Key provided by Paytm
-      * Transaction URL         
-        * Staging     - https://securegw-stage.paytm.in/theia/processTransaction
-        * Production  - https://securegw.paytm.in/theia/processTransaction
-      * Transaction Status URL  
-        * Staging     - https://securegw-stage.paytm.in/merchant-status/getTxnStatus
-        * Production  - https://securegw.paytm.in/merchant-status/getTxnStatus
-      * Website Name            - Provided By Paytm
-      * Callback URL            - Yes
-      * Industry type           - Provided by Paytm
-      * Transaction Status      - Enabled
+## Overview
+This plugin adds the Paytm payment option on checkout and enables you to accept payment through Paytm (Wallet/Credit Card/Debit Card/Net Banking/UPI)
 
-  9. Your Opencart plug-in is now installed. You can accept payment through Paytm.
+## Prerequisites
 
-See Video : https://www.youtube.com/watch?v=ccXjwA5pKfA
+* PHP >= 5.0
+* PHP extensions are required - [cURL][2_link]
 
-# In case of any query, please contact to Paytm.
+
+## Installation
+### Using FTP
+1. Copy all folders (admin, catalog & system) from upload diectory, and paste them into your Opencart **root** directory on server 
+1. Go to the Opencart administration page [http://www.example.com/admin].
+1. Go to **Extensions** > **Payments**.
+1. In payment option list, find  **Paytm Payments** and click on **Install** button.
+1. After finishing installtion, proceed to configuration.
+
+**See Installation**: https://www.youtube.com/watch?v=ccXjwA5pKfA
+
+## Configuration
+
+1. Go to the Opencart administration page [http://www.example.com/admin].
+1. Go to **Extensions** > **Payments**.
+1. In payment option list, find  **Paytm Payments** and click on **Edit** button.
+
+### Configuration Parameters
+
+The below table describes the configurable parameters and helps you to set their values.
+
+
+| Parameter | Type | Description |
+|:---------:|:------:|:-----------:|
+|Merchant ID|ALPHANUMERIC|Enter your Merchant ID provided by Paytm|
+|Merchant Key|ALPHANUMERIC|Enter your Merchant Key provided by Paytm|
+|Website Name|ALPHANUMERIC|Enter your Website Name provded by Paytm|
+|Industry Type|ALPHANUMERIC|Eg. Retail, Entertainment etc.|
+|Transaction URL|URL|[See here][t_link] |
+|Transaction Status URL|URL|[See here][ts_link]|
+|Custom Callback URL|Enabled/Disabled|Enable this only if you want to modify default callback URL|
+|Callback URL|URL|On completion of transaction, Paytm will rediret to this URL with response parameters.|
+|Total|Amount|Minimal amount require to make this payment method active.|
+|Geo Zone|Zone List|Geo Zone for payment method to be active.|
+|Status|Enabled/Disabled|Keep this **Enabled** to active.|
+|Sort Order|Positive Number|Set ordering in the payment methods list.|
+|Order Success Status|Order Status List|Order status that will set for Successful Payment|
+|Order Failed Status|Order Status List|Order status that will set for Failed Payment|
+
+### Transaction URL
+* Staging     - https://securegw-stage.paytm.in/theia/processTransaction
+* Production  - https://securegw.paytm.in/theia/processTransaction
+### Transaction Status URL
+* Staging     - https://securegw-stage.paytm.in/merchant-status/getTxnStatus
+* Production  - https://securegw.paytm.in/merchant-status/getTxnStatus
+
+## In case of any query, please contact to Paytm.
+
+<!--LINKS-->
+
+<!--topic urls:-->
+[0]: #overview
+[1]: #prerequisites
+[2]: #installation
+[3]: #configuration
+[3.1]: #configuration-parameters
+[t_link]: #transaction-url
+[ts_link]: #transaction-status-url
+
+
+<!--external links:-->
+[1_link]: 
+[2_link]: http://php.net/manual/en/book.curl.php
+
+<!--images:-->
