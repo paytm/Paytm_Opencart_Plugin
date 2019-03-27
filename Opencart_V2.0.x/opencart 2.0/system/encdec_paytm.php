@@ -168,7 +168,7 @@ function callNewAPI($apiURL, $requestParamList) {
 	// curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
 	// TLS 1.2 or above required
-	curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
+	// curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
 
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 		'Content-Type: application/json', 

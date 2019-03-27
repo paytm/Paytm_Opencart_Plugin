@@ -264,82 +264,54 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		}
 	}
 	
+	/**
+	* check cURL working or able to communicate with Paytm 
+	*/
 	public function curltest(){
-
 		// phpinfo();exit;
 		$debug = array();
-
 		if(!function_exists("curl_init")){
 			$debug[0]["info"][] = "cURL extension is either not available or disabled. Check phpinfo for more info.";
-
 		// if curl is enable then see if outgoing URLs are blocked or not
 		} else {
-
 			// if any specific URL passed to test for
 			if(isset($this->request->get["url"]) && $this->request->get["url"] != ""){
-				$testing_urls = array($this->request->get["url"]);   
-			
+				$testing_urls = array(urldecode($this->request->get["url"]));
 			} else {
-
 				// this site homepage URL
 				$server = $this->request->server['HTTPS']? HTTPS_SERVER : HTTP_SERVER;
-
 				$testing_urls = array(
-											array(
-												"url" => $server,
-												"ssl" => false,
-											),
-											array(
-												"url" => "www.google.co.in",
-												"ssl" => false,
-											),
-											array(
-												"url" => $this->config->get('paytm_transaction_status_url'),
-												"ssl" => CURL_SSLVERSION_TLSv1_2, // TLS 1.2 or above required
-											)
-										);
+					$server,
+					"https://www.gstatic.com/generate_204",
+					$this->config->get('paytm_transaction_status_url'));
 			}
-
 			// loop over all URLs, maintain debug log for each response received
-			foreach($testing_urls as $key=>$val){
-
-				$debug[$key]["info"][] = "Connecting to <b>" . $val["url"] . "</b> using cURL";
-
-				$ch = curl_init($val["url"]);
+			foreach($testing_urls as $key => $val){
+				$debug[$key]["info"][] = "Connecting to <b>" . $val . "</b> using cURL";
+				$ch = curl_init($val);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-				if($val["ssl"]){
-					curl_setopt($ch, CURLOPT_SSLVERSION, $val["ssl"]);
-				}
-
 				$res = curl_exec($ch);
-				
 				if (!curl_errno($ch)) {
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					$debug[$key]["info"][] = "cURL executed succcessfully.";
 					$debug[$key]["info"][] = "HTTP Response Code: <b>". $http_code . "</b>";
-
-					// $debug[$key]["content"] = $res;
-
 				} else {
 					$debug[$key]["info"][] = "Connection Failed !!";
 					$debug[$key]["info"][] = "Error Code: <b>" . curl_errno($ch) . "</b>";
 					$debug[$key]["info"][] = "Error: <b>" . curl_error($ch) . "</b>";
-					break;
 				}
-
+				if(isset($this->request->get["url"]) && $this->request->get["url"] != ""){
+					$debug[$key]["info"][] = $res;
+				}
 				curl_close($ch);
 			}
 		}
-
 		foreach($debug as $k=>$v){
 			echo "<ul>";
 			foreach($v["info"] as $info){
 				echo "<li>".$info."</li>";
 			}
 			echo "</ul>";
-
-			// echo "<div style='display:none;'>" . $v["content"] . "</div>";
 			echo "<hr/>";
 		}
 	}
