@@ -4,7 +4,12 @@ class ControllerExtensionPaymentPaytm extends Controller {
 	private $append_timestamp 		= true; /* prevent duplicate order id */
 	private $save_paytm_response 	= true; /* save paytm response in db */
 	private $max_retry_count 		= 3; /* number of retries untill cURL gets success */
-	private $request_id				= 'OPENCART_' . VERSION;
+	private $request_id				= false;
+
+	public function __construct($registry) {
+		parent::__construct($registry);
+		$this->request_id				= 'OPENCART_' . VERSION;
+	}
 
 	public function index() {
 	
@@ -94,8 +99,9 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$data['text_response'] = sprintf($this->language->get('text_response'), '');
 		}
 		/* save paytm response in db */
-		if(!empty($_POST['STATUS']) && $this->save_paytm_response){
+		if($this->save_paytm_response && !empty($_POST['STATUS'])){
 			$order_data_id = $this->model_extension_payment_paytm->saveTxnResponse($_POST, $this->getOrderId($_POST['ORDERID']));
+			$update_response = $_POST;
 		}
 		/* save paytm response in db */
 
@@ -129,15 +135,21 @@ class ControllerExtensionPaymentPaytm extends Controller {
 
 					
 					/* save paytm response in db */
-					if(!empty($resParams['STATUS']) && $this->save_paytm_response){
-						$this->model_extension_payment_paytm->saveTxnResponse($resParams,$this->getOrderId($resParams['ORDERID']), $order_data_id);
+					if($this->save_paytm_response && !empty($resParams['STATUS'])){
+						$update_response['STATUS'] 	= $resParams['STATUS'];
+						$update_response['RESPCODE'] 	= $resParams['RESPCODE'];
+						$update_response['RESPMSG'] 	= $resParams['RESPMSG'];
+						$this->model_extension_payment_paytm->saveTxnResponse($update_response,$this->getOrderId($resParams['ORDERID']), $order_data_id);
 					}
 					/* save paytm response in db */
 
 					// if curl failed to fetch response
 					if(!isset($resParams['STATUS'])){
-
+					try {
 						$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paytm_order_failed_status_id'));
+					} catch(\Exception $e){
+
+					}
 
 						// unset order id if it is set, so new order id could be generated
 						if(isset($this->session->data['order_id']))
@@ -152,13 +164,19 @@ class ControllerExtensionPaymentPaytm extends Controller {
 							&& $resParams['TXNAMOUNT'] == $_POST['TXNAMOUNT']) {
 
 							$comment = sprintf($this->language->get('text_transaction_id'), $resParams['TXNID']) .'<br/>'. sprintf($this->language->get('text_paytm_order_id'), $resParams['ORDERID']);
-
+						try {
 							$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paytm_order_success_status_id'),$comment);
+						} catch(\Exception $e){
+
+						}
 							$this->fireSuccess($data);
 						
 						} else {
-							
-							$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paytm_order_failed_status_id'));
+							try {
+								$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paytm_order_failed_status_id'));
+							} catch(\Exception $e){
+
+							}
 
 							$this->session->data['error'] = $this->language->get('text_failure');
 
@@ -172,8 +190,11 @@ class ControllerExtensionPaymentPaytm extends Controller {
 					}
 
 				} else {
+					try {
+						$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paytm_order_failed_status_id'));
+					} catch(\Exception $e){
 
-					$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paytm_order_failed_status_id'));
+					}
 
 					$this->session->data['error'] = $this->language->get('text_failure');
 					if(isset($_POST['RESPMSG']) && !empty($_POST['RESPMSG'])){
@@ -249,11 +270,11 @@ class ControllerExtensionPaymentPaytm extends Controller {
 
 
 					foreach($promo_codes as $key=>$val){
-						// entered promo code should matched
+						// entered promo code should matched, case insensitive
 						// should be active
 						// should be in start and end date range
 						// plus 86400 to include entire day of expiry date
-						if($val["code"] == $this->request->post["promo_code"] 
+						if(strtolower(trim($val["code"])) == strtolower(trim($this->request->post["promo_code"])) 
 							&& $val["status"] == "1" 
 							&& strtotime($val["start_date"]) <= strtotime("now") 
 							&& (strtotime($val["end_date"]) +86400) >= strtotime("now")){
@@ -314,12 +335,12 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		} else {
 
 			// if any specific URL passed to test for
-			if(isset($this->request->get["url"]) && $this->request->get["url"] != ""){
+			if(!empty($this->request->get["url"])){
 				$testing_urls = array(urldecode($this->request->get["url"]));
 			} else {
 
 				// this site homepage URL
-				$server = $this->request->server['HTTPS']? HTTPS_SERVER : HTTP_SERVER;
+				$server = (!empty($this->request->server['HTTPS'])? HTTPS_SERVER : HTTP_SERVER);
 
 				$testing_urls = array(
 					$server,
@@ -336,7 +357,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
 				$res = curl_exec($ch);
-
+				$http_code = '';
 				if (!curl_errno($ch)) {
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					$debug[$key]["info"][] = "cURL executed succcessfully.";
@@ -347,8 +368,8 @@ class ControllerExtensionPaymentPaytm extends Controller {
 					$debug[$key]["info"][] = "Error: <b>" . curl_error($ch) . "</b>";
 				}
 
-				if(isset($this->request->get["url"]) && $this->request->get["url"] != ""){
-					$debug[$key]["info"][] = $res;
+				if((!empty($this->request->get["url"])) || ($this->config->get('paytm_transaction_status_url') == $val && $http_code != '200')){
+					$debug[$key]["info"][] = "Response: <br/><!----- Response Below ----->" . $res;
 				}
 
 				curl_close($ch);

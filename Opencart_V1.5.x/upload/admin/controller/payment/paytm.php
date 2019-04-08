@@ -311,6 +311,7 @@ class ControllerPaymentPaytm extends Controller {
 	private function validateCurl($paytm_transaction_status_url = ''){		
 		if(!empty($paytm_transaction_status_url) && function_exists("curl_init")){
 			$ch 	= curl_init(trim($paytm_transaction_status_url));
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
 			$res 	= curl_exec($ch);
 			curl_close($ch);
 			return $res !== false;

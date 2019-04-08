@@ -33,13 +33,22 @@ class ModelExtensionPaymentPaytm extends Model {
 	public function saveTxnResponse($data  = array(), $id = false){
 		if(empty($data['STATUS'])) return false;
 
-		$status 				= (!empty($data['STATUS']) && $data['STATUS'] =='TXN_SUCCESS') ? 1 : 0;
+		$status 			= (!empty($data['STATUS']) && $data['STATUS'] =='TXN_SUCCESS') ? 1 : 0;
 		$paytm_order_id 	= (!empty($data['ORDERID'])? $data['ORDERID']:'');
 		$transaction_id 	= (!empty($data['TXNID'])? $data['TXNID']:'');
 		if($paytm_order_id && $id){
-			$sql =  "UPDATE " . DB_PREFIX . "paytm_order_data SET transaction_id = '" . $this->db->escape($transaction_id) . "', status = '" . (int)$status . "', paytm_response = '" . $this->db->escape(json_encode($data)) . "', date_modified = NOW() WHERE paytm_order_id = '" . $paytm_order_id . "' AND id = '" . (int)$id . "'";
-			$this->db->query($sql);
-			return $id;
+			$sql = "SELECT * from " . DB_PREFIX . "paytm_order_data WHERE paytm_order_id = '" . $paytm_order_id . "'";
+			$query = $this->db->query($sql);
+			if($query->row){
+				$update_response = (array)json_decode($query->row['paytm_response']);
+				$update_response['STATUS'] 		= $data['STATUS'];
+				$update_response['RESPCODE'] 	= $data['RESPCODE'];
+				$update_response['RESPMSG'] 	= $data['RESPMSG'];
+
+				$sql =  "UPDATE " . DB_PREFIX . "paytm_order_data SET transaction_id = '" . $this->db->escape($transaction_id) . "', status = '" . (int)$status . "', paytm_response = '" . $this->db->escape(json_encode($update_response)) . "', date_modified = NOW() WHERE paytm_order_id = '" . $paytm_order_id . "' AND id = '" . (int)$id . "'";
+				$this->db->query($sql);
+				return $update_response;
+			}			
 		}		
 		return false;
 	}

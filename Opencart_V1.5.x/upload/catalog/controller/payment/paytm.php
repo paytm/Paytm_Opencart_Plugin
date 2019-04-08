@@ -4,8 +4,13 @@ class ControllerPaymentPaytm extends Controller {
 	private $append_timestamp 		= true; /* prevent duplicate order id */
 	private $save_paytm_response 	= true; /* save paytm response in db */
 	private $max_retry_count 		= 3; /* number of retries untill cURL gets success */
-	private $request_id				= 'OPENCART_' . VERSION;
+	private $request_id				= false;
 	
+	public function __construct($registry) {
+		parent::__construct($registry);
+		$this->request_id				= 'OPENCART_' . VERSION;
+	}
+
 	protected function index() 
 	{
 		require_once(DIR_SYSTEM . 'paytm/encdec_paytm.php');
@@ -95,8 +100,9 @@ class ControllerPaymentPaytm extends Controller {
 			$this->data['text_response'] 	= sprintf($this->language->get('text_response'), '');
 		}
 		/* save paytm response in db */
-		if(!empty($_POST['STATUS']) && $this->save_paytm_response){
+		if($this->save_paytm_response && !empty($_POST['STATUS'])){
 			$order_data_id = $this->model_payment_paytm->saveTxnResponse($_POST, $this->getOrderId($_POST['ORDERID']));
+			$update_response = $_POST;
 		}
 		/* save paytm response in db */
 
@@ -130,15 +136,21 @@ class ControllerPaymentPaytm extends Controller {
 
 					
 					/* save paytm response in db */
-					if(!empty($resParams['STATUS']) && $this->save_paytm_response){
-						$this->model_payment_paytm->saveTxnResponse($resParams, $this->getOrderId($resParams['ORDERID']), $order_data_id);
+					if($this->save_paytm_response && !empty($resParams['STATUS'])){
+						$update_response['STATUS'] 	= $resParams['STATUS'];
+						$update_response['RESPCODE'] 	= $resParams['RESPCODE'];
+						$update_response['RESPMSG'] 	= $resParams['RESPMSG'];
+						$this->model_payment_paytm->saveTxnResponse($update_response, $this->getOrderId($resParams['ORDERID']), $order_data_id);
 					}
 					/* save paytm response in db */
 
 					// if curl failed to fetch response
 					if(!isset($resParams['STATUS'])){
-
+					try{
 						$this->model_checkout_order->confirm($order_id, $this->config->get('paytm_order_failed_status_id'));
+					} catch(\EXception $e){
+
+					}
 
 						// unset order id if it is set, so new order id could be generated
 						if(isset($this->session->data['order_id']))
@@ -153,13 +165,19 @@ class ControllerPaymentPaytm extends Controller {
 							&& $resParams['TXNAMOUNT'] == $_POST['TXNAMOUNT']) {
 
 							//$comment = sprintf($this->language->get('text_transaction_id'), $resParams['TXNID']) .'<br/>'. sprintf($this->language->get('text_paytm_order_id'), $resParams['ORDERID']);
+							try{
+								$this->model_checkout_order->confirm($order_id, $this->config->get('paytm_order_success_status_id'));
+							} catch(\EXception $e){
 
-							$this->model_checkout_order->confirm($order_id, $this->config->get('paytm_order_success_status_id'));
+							}
 							$this->fireSuccess();
 						
 						} else {
-							
-							$this->model_checkout_order->confirm($order_id, $this->config->get('paytm_order_failed_status_id'));
+							try{
+								$this->model_checkout_order->confirm($order_id, $this->config->get('paytm_order_failed_status_id'));
+							} catch(\EXception $e){
+
+							}
 
 							$this->session->data['success'] = $this->language->get('text_failure');
 
@@ -173,8 +191,11 @@ class ControllerPaymentPaytm extends Controller {
 					}
 
 				} else {
+					try{
+						$this->model_checkout_order->confirm($order_id, $this->config->get('paytm_order_failed_status_id'));
+					} catch(\EXception $e){
 
-					$this->model_checkout_order->confirm($order_id, $this->config->get('paytm_order_failed_status_id'));
+					}
 
 					$this->session->data['success'] = $this->language->get('text_failure');
 					if(isset($_POST['RESPMSG']) && !empty($_POST['RESPMSG'])){
@@ -277,12 +298,12 @@ class ControllerPaymentPaytm extends Controller {
 		} else {
 
 			// if any specific URL passed to test for
-			if(isset($this->request->get["url"]) && $this->request->get["url"] != ""){
+			if(!empty($this->request->get["url"])){
 				$testing_urls = array(urldecode($this->request->get["url"]));
 			} else {
 
 				// this site homepage URL
-				$server = $this->request->server['HTTPS']? HTTPS_SERVER : HTTP_SERVER;
+				$server = (!empty($this->request->server['HTTPS'])? HTTPS_SERVER : HTTP_SERVER);
 
 				$testing_urls = array(
 					$server,
@@ -299,7 +320,7 @@ class ControllerPaymentPaytm extends Controller {
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
 				$res = curl_exec($ch);
-
+				$http_code = '';
 				if (!curl_errno($ch)) {
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					$debug[$key]["info"][] = "cURL executed succcessfully.";
@@ -310,8 +331,8 @@ class ControllerPaymentPaytm extends Controller {
 					$debug[$key]["info"][] = "Error: <b>" . curl_error($ch) . "</b>";
 				}
 
-				if(isset($this->request->get["url"]) && $this->request->get["url"] != ""){
-					$debug[$key]["info"][] = $res;
+				if((!empty($this->request->get["url"])) || ($this->config->get('paytm_transaction_status_url') == $val && $http_code != '200')){
+					$debug[$key]["info"][] = "Response: <br/><!----- Response Below ----->" . $res;
 				}
 
 				curl_close($ch);

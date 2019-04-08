@@ -151,8 +151,8 @@ class PaytmPayment {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::$connect_timeout);
+		curl_setopt($ch, CURLOPT_TIMEOUT, self::$timeout);
 		
 		/*
 		** default value is 2 and we also want to use 2

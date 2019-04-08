@@ -265,7 +265,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		}
 
 		$data['last_updated'] = "";
-		$path = DIR_SYSTEM . "/paytm/paytm_version.txt";
+		$path = DIR_SYSTEM . "/library/paytm/paytm_version.txt";
 		if(file_exists($path)){
 			$handle = fopen($path, "r");
 			if($handle !== false){
@@ -338,7 +338,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 					$retry++;
 				} while(!$resParams && $retry < $this->max_retry_count);
 
-				if(!empty($resParams['STATUS']) && $this->save_paytm_response){
+				if($this->save_paytm_response && !empty($resParams['STATUS'])){
 					$update_response	=	$this->model_extension_payment_paytm->saveTxnResponse($resParams, $this->request->post['order_data_id']); 
 					if($update_response){
 
@@ -346,7 +346,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 						if($resParams['STATUS'] != 'PENDING'){
 							$message .= sprintf($this->language->get('text_response_status_success'), $resParams['STATUS']);
 						}						
-						$json = array("success" => true, "response" => $resParams, 'message' => $message);
+						$json = array("success" => true, "response" => $update_response, 'message' => $message);
 					}
 				}
 		}		
@@ -360,6 +360,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 	private function validateCurl($payment_paytm_transaction_status_url = ''){		
 		if(!empty($payment_paytm_transaction_status_url) && function_exists("curl_init")){
 			$ch 	= curl_init(trim($payment_paytm_transaction_status_url));
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
 			$res 	= curl_exec($ch);
 			curl_close($ch);
 			return $res !== false;

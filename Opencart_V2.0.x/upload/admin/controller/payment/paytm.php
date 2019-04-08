@@ -405,14 +405,14 @@ class ControllerPaymentPaytm extends Controller {
 					$retry++;
 				} while(!$resParams && $retry < $this->max_retry_count);
 
-				if(!empty($resParams['STATUS']) && $this->save_paytm_response){
+				if($this->save_paytm_response && !empty($resParams['STATUS'])){
 					$update_response	=	$this->model_payment_paytm->saveTxnResponse($resParams, $this->request->post['order_data_id']); 
 					if($update_response){
 						$message = $this->language->get('text_response_success');
 						if($resParams['STATUS'] != 'PENDING'){
 							$message .= sprintf($this->language->get('text_response_status_success'), $resParams['STATUS']);
 						}						
-						$json = array("success" => true, "response" => $resParams, 'message' => $message);
+						$json = array("success" => true, "response" => $update_response, 'message' => $message);
 					}
 				}
 		}		
@@ -435,6 +435,7 @@ class ControllerPaymentPaytm extends Controller {
 	private function validateCurl($paytm_transaction_status_url = ''){		
 		if(!empty($paytm_transaction_status_url) && function_exists("curl_init")){
 			$ch 	= curl_init(trim($paytm_transaction_status_url));
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
 			$res 	= curl_exec($ch);
 			curl_close($ch);
 			return $res !== false;
