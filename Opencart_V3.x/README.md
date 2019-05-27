@@ -1,4 +1,4 @@
-# Paytm Payment plugin for Opencart version 2.0.x, 2.1.x & 2.2.x
+# Paytm Payment plugin for Opencart version 3.x
 
 ## Table of Contents
 - [Overview][0]<br/>
@@ -12,24 +12,26 @@ This plugin adds the Paytm payment option on checkout and enables you to accept 
 
 ## Prerequisites
 
-* PHP >= 5.3
+* PHP >= 5.4
 * PHP extensions are required - [cURL][2_link]
 
 
 ## Installation
 
 ### Using Installer
-1. Download [**paytm_v2.0.ocmod.zip**][1_link]
+1. Download [**paytm_v3.x.ocmod.zip**][1_link]
 1. Go to the Opencart administration page [http://www.example.com/admin].
 1. Go to **Extensions** > **Extension Installer**.
-1. Click on **Upload** button, Select the downloaded file (STEP 1) then Click on **Continue** button and wait for process complete
-1. Go to **Extensions** > **Payments**
+1. Click on **Upload** button, Select the downloaded file (STEP 1) and wait for process complete
+1. Go to **Extensions** > **Extensions**
+1. Choose **Payments** from **Extension List** dropdown.
 1. In payment option list, find  **Paytm Payments** and click on **Install** button.
 
 ### Using FTP
 1. Copy all folders (admin, catalog & system) from upload diectory, and paste them into your Opencart **root** directory on server 
 1. Go to the Opencart administration page [http://www.example.com/admin].
-1. Go to **Extensions** > **Payments**.
+1. Go to **Extensions** > **Extensions**
+1. Choose **Payments** from **Extension List** dropdown.
 1. In payment option list, find  **Paytm Payments** and click on **Install** button.
 1. After finishing installtion, proceed to configuration.
 
@@ -38,7 +40,8 @@ This plugin adds the Paytm payment option on checkout and enables you to accept 
 ## Configuration
 
 1. Go to the Opencart administration page [http://www.example.com/admin].
-1. Go to **Extensions** > **Payments**.
+1. Go to **Extensions** > **Extensions**
+1. Choose **Payments** from **Extension List** dropdown.
 1. In payment option list, find  **Paytm Payments** and click on **Edit** button.
 
 ### Configuration Parameters
@@ -70,8 +73,7 @@ The below table describes the configurable parameters and helps you to set their
 * Staging     - https://securegw-stage.paytm.in/merchant-status/getTxnStatus
 * Production  - https://securegw.paytm.in/merchant-status/getTxnStatus
 
-## In case of any query, please contact to Paytm.
-
+### In case of any query, please contact to Paytm.
 
 <!--LINKS-->
 
@@ -86,7 +88,7 @@ The below table describes the configurable parameters and helps you to set their
 
 
 <!--external links:-->
-[1_link]: paytm_v2.0.ocmod.zip
+[1_link]: paytm_v3.x.ocmod.zip
 [2_link]: http://php.net/manual/en/book.curl.php
 
 <!--images:-->
