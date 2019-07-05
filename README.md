@@ -32,7 +32,7 @@ For [3.0.x][3_0]
 [1_5]:/Opencart_V1.5.x
 [2_0]:/Opencart_V2.0.x
 [2_3]:/Opencart_V2.3.x
-[3_0]:/OpenCart_V3.x
+[3_0]:/Opencart_V3.x
 
 
 <!--external links:-->
