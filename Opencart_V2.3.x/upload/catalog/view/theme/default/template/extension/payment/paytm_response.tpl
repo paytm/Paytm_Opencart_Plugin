@@ -11,8 +11,8 @@
 			<div style="border: 1px solid #DDDDDD; margin-bottom: 20px; width: 350px; margin-left: auto; margin-right: auto;">
 				<WPDISPLAY ITEM=banner>
 			</div>
-			<p><?php echo $text_failure; ?></p>
-			<p><?php echo $text_failure_wait; ?></p>
+			<p><?php echo $text_message; ?></p>
+			<p><?php echo $text_message_wait; ?></p>
 		</div>
 		<script type="text/javascript">
 			setTimeout('location = \'<?php echo $continue; ?>\';', 2500);

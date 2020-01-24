@@ -1,9 +1,9 @@
 <?php
+require_once(DIR_SYSTEM . 'paytm/PaytmHelper.php');
+require_once(DIR_SYSTEM . 'paytm/PaytmChecksum.php');
 class ControllerPaymentPaytm extends Controller {
 	
 	private $error 					= array();
-	private $save_paytm_response 	= true; /* save paytm response in db */
-	private $max_retry_count 		= 3; /* number of retries untill cURL gets success */
 
 	/**
 	* create `paytm_order_data` table and install this module.
@@ -19,16 +19,8 @@ class ControllerPaymentPaytm extends Controller {
 		$this->load->model('payment/paytm');
 		$this->model_payment_paytm->uninstall();
 	}
-	/**
-	* get Default callback url
-	*/
-	private function getCallbackUrl(){
-		$callback_url = "index.php?route=payment/paytm/callback";
-		return (!empty($_SERVER['HTTPS']))? HTTPS_CATALOG . $callback_url : HTTP_CATALOG . $callback_url;
-	}
-		
+
 	public function index() {
-		require_once(DIR_SYSTEM . 'paytm/encdec_paytm.php');
 
 		$this->language->load('payment/paytm');
 
@@ -37,48 +29,20 @@ class ControllerPaymentPaytm extends Controller {
 		$this->load->model('setting/setting');
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			$this->request->post = array_map('trim', $this->request->post);
 			$this->model_setting_setting->editSetting('paytm', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			if(!$this->validateCurl($this->request->post['paytm_transaction_status_url'])){
+			if(!PaytmHelper::validateCurl(PaytmHelper::getTransactionStatusURL($this->request->post['paytm_environment']))){
 				$this->session->data['warning'] = $this->language->get('error_curl_warning');
 				$this->redirect($this->url->link('payment/paytm', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 
 			$this->redirect($this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'));
 		}
-
-		$this->data['heading_title'] 				= $this->language->get('heading_title');
-		$this->data['text_enabled'] 				= $this->language->get('text_enabled');
-		$this->data['text_disabled'] 				= $this->language->get('text_disabled');
-		$this->data['text_all_zones'] 			= $this->language->get('text_all_zones');
-	
-		
-		$this->data['text_opencart_version'] 	= $this->language->get('text_opencart_version');
-		$this->data['text_curl_version'] 		= $this->language->get('text_curl_version');
-		$this->data['text_php_version'] 			= $this->language->get('text_php_version');
-		$this->data['text_last_updated'] 		= $this->language->get('text_last_updated');
-		$this->data['text_curl_disabled'] 		= $this->language->get('text_curl_disabled');
-		
-		$this->data['entry_merchant_id'] 		= $this->language->get('entry_merchant_id');
-		$this->data['entry_merchant_key'] 		= $this->language->get('entry_merchant_key');
-		$this->data['entry_website'] 				= $this->language->get('entry_website');
-		$this->data['entry_industry_type'] 		= $this->language->get('entry_industry_type');
-		$this->data['entry_transaction_url'] 	= $this->language->get('entry_transaction_url');
-		$this->data['entry_transaction_status_url'] = $this->language->get('entry_transaction_status_url');
-		$this->data['entry_callback_url_status'] = $this->language->get('entry_callback_url_status');
-		$this->data['entry_callback_url'] 		= $this->language->get('entry_callback_url');
-		$this->data['entry_order_success_status'] = $this->language->get('entry_order_success_status');
-		$this->data['entry_order_failed_status'] = $this->language->get('entry_order_failed_status');
-		
-		$this->data['entry_total'] 				= $this->language->get('entry_total');	
-		$this->data['entry_geo_zone'] 			= $this->language->get('entry_geo_zone');
-		$this->data['entry_status'] 				= $this->language->get('entry_status');
-		$this->data['entry_sort_order'] 			= $this->language->get('entry_sort_order');		
-
-		$this->data['button_save'] 				= $this->language->get('button_save');
-		$this->data['button_cancel'] 				= $this->language->get('button_cancel');
+		// load all language variables
+		$this->data = $this->load->language('payment/paytm');
 		
 		if (isset($this->session->data['warning'])) {
 			$this->data['warning'] = $this->session->data['warning'];
@@ -98,11 +62,13 @@ class ControllerPaymentPaytm extends Controller {
 		} else {
 			$this->data['error_merchant_id'] = '';
 		}
+
 		if (isset($this->error['merchant_key'])) {
 			$this->data['error_merchant_key'] = $this->error['merchant_key'];
 		} else {
 			$this->data['error_merchant_key'] = '';
 		}
+
 		if (isset($this->error['website'])) {
 			$this->data['error_website'] = $this->error['website'];
 		} else {
@@ -114,29 +80,11 @@ class ControllerPaymentPaytm extends Controller {
 		} else {
 			$this->data['error_industry_type'] = '';
 		}
-		
-		if (isset($this->error['transaction_url'])) {
-			$this->data['error_transaction_url'] = $this->error['transaction_url'];
+
+		if (isset($this->error['environment'])) {
+			$this->data['error_environment'] = $this->error['environment'];
 		} else {
-			$this->data['error_transaction_url'] = '';
-		}
-		
-		if (isset($this->error['transaction_status_url'])) {
-			$this->data['error_transaction_status_url'] = $this->error['transaction_status_url'];
-		} else {
-			$this->data['error_transaction_status_url'] = '';
-		}
-		
-		if (isset($this->error['callback_url_status'])) {
-			$this->data['error_callback_url_status'] = $this->error['callback_url_status'];
-		} else {
-			$this->data['error_callback_url_status'] = '';
-		}
-		
-		if (isset($this->error['callback_url'])) {
-			$this->data['error_callback_url'] = $this->error['callback_url'];
-		} else {
-			$this->data['error_callback_url'] = '';
+			$this->data['error_environment'] = '';
 		}
 		
 		$this->data['breadcrumbs'] = array();
@@ -187,34 +135,12 @@ class ControllerPaymentPaytm extends Controller {
 			$this->data['paytm_industry_type'] = $this->config->get('paytm_industry_type');
 		}
 		
-		if (isset($this->request->post['paytm_transaction_url'])) {
-			$this->data['paytm_transaction_url'] = $this->request->post['paytm_transaction_url'];
-		} else {
-			$this->data['paytm_transaction_url'] = $this->config->get('paytm_transaction_url');
-		}
-
-		if (isset($this->request->post['paytm_transaction_status_url'])) {
-			$this->data['paytm_transaction_status_url'] = $this->request->post['paytm_transaction_status_url'];
-		} else {
-			$this->data['paytm_transaction_status_url'] = $this->config->get('paytm_transaction_status_url');
-		}
-
-		if (isset($this->request->post['paytm_callback_url_status'])) {
-			$this->data['paytm_callback_url_status'] = $this->request->post['paytm_callback_url_status'];
-		} else if($this->config->get('paytm_callback_url_status')){
-			$this->data['paytm_callback_url_status'] = $this->config->get('paytm_callback_url_status');
-		} else {
-			$this->data['paytm_callback_url_status'] = "0";
-		}
-
-		$this->data["default_callback_url"] = $this->getCallbackUrl();
-
-		if (isset($this->request->post['paytm_callback_url_status']) && $this->request->post['paytm_callback_url_status'] == 1) {
-			$this->data['paytm_callback_url'] = $this->request->post['paytm_callback_url'];
-		} else if($this->config->get('paytm_callback_url')) {
-			$this->data['paytm_callback_url'] = $this->config->get('paytm_callback_url');
-		} else {
-			$this->data['paytm_callback_url'] = $this->data["default_callback_url"];
+		if (isset($this->request->post['paytm_environment'])) {
+			$this->data['paytm_environment'] = $this->request->post['paytm_environment'];
+		} else if ($this->config->get('paytm_environment')) {
+			$this->data['paytm_environment'] = $this->config->get('paytm_environment');
+		}else{
+			$this->data['paytm_environment'] = 0;
 		}
 		
 		if (isset($this->request->post['paytm_order_success_status_id'])) {
@@ -265,32 +191,22 @@ class ControllerPaymentPaytm extends Controller {
 			$this->data['paytm_sort_order'] = $this->config->get('paytm_sort_order');
 		}
 
-		$this->data['last_updated'] = "";
-		$path = DIR_SYSTEM . "/paytm/paytm_version.txt";
-		if(file_exists($path)){
-			$handle = fopen($path, "r");
-			if($handle !== false){
-				$date = fread($handle, 10); // i.e. DD-MM-YYYY or 25-04-2018
-				$this->data['last_updated'] = date("d F Y", strtotime($date));
-			}
-		}
-		
 		// Check cUrl is enabled or not
-		if(function_exists('curl_version')){
-			$this->data['curl_version'] = (!empty($curl_ver_array = curl_version()) && $curl_ver_array['version']) ? $curl_ver_array['version']:'';
-		}else{
-			$this->data['curl_version'] = '';
-		}		
+		$this->data['curl_version']		= PaytmHelper::getcURLversion();
 
-		$this->data['opencart_version'] = VERSION;
-		$this->data['php_version'] = PHP_VERSION;
+		if(empty($this->data['curl_version'])){
+			$this->data['error_warning']	= $this->language->get('text_curl_disabled');
+		}
 
+		$this->data['last_updated']		= date("d F Y", strtotime(PaytmConstants::LAST_UPDATED)) .' - '.PaytmConstants::PLUGIN_VERSION;
+		$this->data['opencart_version']	= VERSION;
+		$this->data['php_version']		= PHP_VERSION;
 		$this->template = 'payment/paytm.tpl';
 		$this->children = array(
 			'common/header',
 			'common/footer'
 		);
-
+       
 		$this->response->setOutput($this->render());	
 	}
 	
@@ -305,22 +221,11 @@ class ControllerPaymentPaytm extends Controller {
 		}
 	}
 	
-	/**
-	* check and test cURL is working or able to communicate properly with paytm
-	*/
-	private function validateCurl($paytm_transaction_status_url = ''){		
-		if(!empty($paytm_transaction_status_url) && function_exists("curl_init")){
-			$ch 	= curl_init(trim($paytm_transaction_status_url));
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-			$res 	= curl_exec($ch);
-			curl_close($ch);
-			return $res !== false;
-		}
-		return false;
-	}
-	
 	//validate function to ensure required fields are filled before proceeding
 	protected function validate() {
+
+		$this->request->post = array_map('trim', $this->request->post);
+
 		if (!$this->user->hasPermission('modify', 'payment/paytm')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
@@ -328,28 +233,25 @@ class ControllerPaymentPaytm extends Controller {
 		if (!$this->request->post['paytm_merchant_id']) {
 			$this->error['merchant_id'] = $this->language->get('error_merchant_id');
 		}
+
 		if (!$this->request->post['paytm_merchant_key']) {
 			$this->error['merchant_key'] = $this->language->get('error_merchant_key');
 		}
+
 		if (!$this->request->post['paytm_website']) {
 			$this->error['website'] = $this->language->get('error_website');
 		}
+
 		if (!$this->request->post['paytm_industry_type']) {
 			$this->error['industry_type'] = $this->language->get('error_industry_type');
 		}
-		if (!$this->request->post['paytm_transaction_url']) {
-			$this->error['transaction_url'] = $this->language->get('error_transaction_url');
+
+		if (!in_array($this->request->post['paytm_environment'], array("1","0"))) {
+			$this->error['environment'] = $this->language->get('error_environment');
 		}
-		if (!$this->request->post['paytm_transaction_status_url']) {
-			$this->error['transaction_status_url'] = $this->language->get('error_transaction_status_url');
-		}
-		if (!$this->request->post['paytm_callback_url']) {
-			$this->error['callback_url'] = $this->language->get('error_callback_url');
-		} else {
-			$url_parts = parse_url($this->request->post['paytm_callback_url']);
-			if(!isset($url_parts["scheme"]) || (strtolower($url_parts["scheme"]) != "http" && strtolower($url_parts["scheme"]) != "https") || !isset($url_parts["host"]) || $url_parts["host"] == ""){
-				$this->error['callback_url'] = $this->language->get('error_valid_callback_url');
-			}
+
+		if(PaytmHelper::getcURLversion() == false){
+			$this->error['warning'] = $this->language->get('text_curl_disabled');
 		}
 
 		if (!$this->error) {

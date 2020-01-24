@@ -22,7 +22,7 @@ class ModelExtensionPaymentPaytm extends Model {
 
 	public function getPaytmOrderData($order_id) {
 
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "paytm_order_data` WHERE order_id = '" . (int)$order_id . "' ORDER BY id DESC LIMIT 1");
+		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "paytm_order_data` WHERE `order_id` = '" . (int)$order_id . "' ORDER BY `id` DESC LIMIT 1");
 		if ($query->num_rows) {
 			return $query->row;
 		} else {
@@ -37,18 +37,9 @@ class ModelExtensionPaymentPaytm extends Model {
 		$paytm_order_id 	= (!empty($data['ORDERID'])? $data['ORDERID']:'');
 		$transaction_id 	= (!empty($data['TXNID'])? $data['TXNID']:'');
 		if($paytm_order_id && $id){
-			$sql = "SELECT * from " . DB_PREFIX . "paytm_order_data WHERE paytm_order_id = '" . $paytm_order_id . "'";
-			$query = $this->db->query($sql);
-			if($query->row){
-				$update_response = (array)json_decode($query->row['paytm_response']);
-				$update_response['STATUS'] 		= $data['STATUS'];
-				$update_response['RESPCODE'] 	= $data['RESPCODE'];
-				$update_response['RESPMSG'] 	= $data['RESPMSG'];
-
-				$sql =  "UPDATE " . DB_PREFIX . "paytm_order_data SET transaction_id = '" . $this->db->escape($transaction_id) . "', status = '" . (int)$status . "', paytm_response = '" . $this->db->escape(json_encode($update_response)) . "', date_modified = NOW() WHERE paytm_order_id = '" . $paytm_order_id . "' AND id = '" . (int)$id . "'";
-				$this->db->query($sql);
-				return $update_response;
-			}			
+			$sql =  "UPDATE `" . DB_PREFIX . "paytm_order_data` SET `transaction_id` = '" . $this->db->escape($transaction_id) . "', `status` = '" . (int)$status . "', `paytm_response` = '" . $this->db->escape(json_encode($update_response)) . "', `date_modified` = NOW() WHERE `paytm_order_id` = '" . $paytm_order_id . "' AND `id` = '" . (int)$id . "'";
+			$this->db->query($sql);
+			return $data;
 		}		
 		return false;
 	}

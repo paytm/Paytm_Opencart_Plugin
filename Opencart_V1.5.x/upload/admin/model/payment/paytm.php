@@ -22,7 +22,7 @@ class ModelPaymentPaytm extends Model {
 
 	public function getPaytmOrderData($order_id) {
 
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "paytm_order_data` WHERE order_id = '" . (int)$order_id . "' ORDER BY id DESC LIMIT 1");
+		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "paytm_order_data` WHERE `order_id` = '" . (int)$order_id . "' ORDER BY `id` DESC LIMIT 1");
 		if ($query->num_rows) {
 			return $query->row;
 		} else {

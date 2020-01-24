@@ -1,4 +1,5 @@
 <?php 
+require_once(DIR_SYSTEM . "/library/paytm/PaytmConstants.php");
 class ModelExtensionPaymentPaytm extends Model {
 	public function getMethod($address, $total) {
 		$this->load->language('extension/payment/paytm');
@@ -15,8 +16,7 @@ class ModelExtensionPaymentPaytm extends Model {
 			$status = false;
 		}
 
-		// uncomment below line if you do not want customer to show Paytm when currency is not INR
-		// $status = (isset($this->session->data['currency']) && $this->session->data['currency'] != 'INR') ? false : $status;
+		$status = (isset($this->session->data['currency']) && $this->session->data['currency'] != 'INR' && PaytmConstants::ONLY_SUPPORTED_INR) ? false : $status;
 
 		$method_data = array();
 
@@ -34,22 +34,16 @@ class ModelExtensionPaymentPaytm extends Model {
 	/**
 	* save response in db
 	*/
-	public function saveTxnResponse($data  = array(),$order_id, $id = false){
+	public function saveTxnResponse($data  = array(),$order_id){
 		if(empty($data['STATUS'])) return false;
 
-		$status 				= (!empty($data['STATUS']) && $data['STATUS'] =='TXN_SUCCESS') ? 1 : 0;
+		$status 			= (!empty($data['STATUS']) && $data['STATUS'] =='TXN_SUCCESS') ? 1 : 0;
 		$paytm_order_id 	= (!empty($data['ORDERID'])? $data['ORDERID']:'');
 		$transaction_id 	= (!empty($data['TXNID'])? $data['TXNID']:'');
-		
-		if($id !== false){
-			$sql =  "UPDATE " . DB_PREFIX . "paytm_order_data SET order_id = '" . $order_id . "', paytm_order_id = '" . $paytm_order_id . "', transaction_id = '" . $this->db->escape($transaction_id) . "', status = '" . (int)$status . "', paytm_response = '" . $this->db->escape(json_encode($data)) . "', date_modified = NOW() WHERE id = '" . (int)$id . "'";
-			$this->db->query($sql);
-			return $id;
-		}else{
-			$sql =  "INSERT INTO " . DB_PREFIX . "paytm_order_data SET order_id = '" . $order_id . "', paytm_order_id = '" . $paytm_order_id . "', transaction_id = '" . $this->db->escape($transaction_id) . "', status = '" . (int)$status . "', paytm_response = '" . $this->db->escape(json_encode($data)) . "', date_added = NOW(), date_modified = NOW()";
-			$this->db->query($sql);
-			return $this->db->getLastId();
-		}
+
+		$sql =  "INSERT INTO " . DB_PREFIX . "paytm_order_data SET order_id = '" . $order_id . "', paytm_order_id = '" . $paytm_order_id . "', transaction_id = '" . $this->db->escape($transaction_id) . "', status = '" . (int)$status . "', paytm_response = '" . $this->db->escape(json_encode($data)) . "', date_added = NOW(), date_modified = NOW()";
+		$this->db->query($sql);
+		return $this->db->getLastId();
 	}
 }
 ?>
