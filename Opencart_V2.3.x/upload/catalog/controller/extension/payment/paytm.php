@@ -25,7 +25,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		}else{
 			$cust_id = "CUST_".$order_id;
 		}
-		$order_id = '41';
+
 		$amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
 
 		$parameters = array(
