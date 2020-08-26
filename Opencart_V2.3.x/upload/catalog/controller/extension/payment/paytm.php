@@ -59,7 +59,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		if(!empty(PaytmConstants::CUSTOM_CALLBACK_URL)){
 			return PaytmConstants::CUSTOM_CALLBACK_URL;
 		}else{
-			return $this->url->link('extension/payment/paytm/callback');
+			return ($this->request->server['HTTPS']) ? $this->url->link('extension/payment/paytm/callback','',true) : $this->url->link('extension/payment/paytm/callback');
 		}	
 	}
 
