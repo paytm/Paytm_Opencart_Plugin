@@ -33,8 +33,8 @@ class ControllerPaymentPaytm extends Controller {
 			$this->model_setting_setting->editSetting('paytm', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
-
-			if(!PaytmHelper::validateCurl(PaytmHelper::getTransactionStatusURL($this->request->post['paytm_environment']))){
+			
+			if(!PaytmHelper::validateCurl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->request->post['paytm_environment']))){
 				$this->session->data['warning'] = $this->language->get('error_curl_warning');
 				$this->redirect($this->url->link('payment/paytm', 'token=' . $this->session->data['token'], 'SSL'));
 			}

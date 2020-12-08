@@ -1,11 +1,13 @@
 <?php
 
 class PaytmConstants{
-	CONST TRANSACTION_URL_PRODUCTION			= "https://securegw.paytm.in/order/process";
-	CONST TRANSACTION_STATUS_URL_PRODUCTION		= "https://securegw.paytm.in/order/status";
+	CONST PRODUCTION_HOST						= "https://securegw.paytm.in/";
+	CONST STAGING_HOST							= "https://securegw-stage.paytm.in/";
 
-	CONST TRANSACTION_URL_STAGING				= "https://securegw-stage.paytm.in/order/process";
-	CONST TRANSACTION_STATUS_URL_STAGING		= "https://securegw-stage.paytm.in/order/status";
+	CONST ORDER_PROCESS_URL						= "order/process";
+	CONST ORDER_STATUS_URL						= "order/status";
+	CONST INITIATE_TRANSACTION_URL				= "theia/api/v1/initiateTransaction";
+	CONST CHECKOUT_JS_URL						= "merchantpgpui/checkoutjs/merchants/MID.js";
 
 	CONST SAVE_PAYTM_RESPONSE 					= true;
 	CONST CHANNEL_ID							= "WEB";
@@ -17,10 +19,11 @@ class PaytmConstants{
 	CONST CONNECT_TIMEOUT						= 10;
 	CONST TIMEOUT								= 10;
 
-	CONST LAST_UPDATED							= "20200120";
+	CONST LAST_UPDATED							= "20191005";
 	CONST PLUGIN_VERSION						= "2.0";
 
 	CONST CUSTOM_CALLBACK_URL					= "";
+	CONST IS_BLINK_SUPPORTED					= true;
 }
 
 ?>

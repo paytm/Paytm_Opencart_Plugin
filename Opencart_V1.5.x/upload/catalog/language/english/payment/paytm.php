@@ -28,3 +28,4 @@ $_['error_server_communication']    = 'It seems some issue in server to server c
 $_['error_checksum_mismatch']       = 'Security Error. Checksum Mismatched!';
 $_['error_amount_mismatch']         = 'Security Error. Amount Mismatched!';
 $_['error_invalid_order']           = 'No order found to process. Kindly contact with us.';
+$_['error_something_went_wrong']    = 'Something Went Wrong!';

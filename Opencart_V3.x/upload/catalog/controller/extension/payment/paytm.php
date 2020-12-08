@@ -28,25 +28,11 @@ class ControllerExtensionPaymentPaytm extends Controller {
 
 		$amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
 
-		$parameters = array(
-							"MID" 				=> $this->config->get('payment_paytm_merchant_id'),
-							"WEBSITE" 			=> $this->config->get('payment_paytm_website'),
-							"INDUSTRY_TYPE_ID" 	=> $this->config->get('payment_paytm_industry_type'),
-							"CALLBACK_URL" 		=> $this->getCallbackUrl(),
-							"ORDER_ID"  		=> $order_id,
-							"CHANNEL_ID" 		=> PaytmConstants::CHANNEL_ID,
-							"CUST_ID" 			=> $cust_id,
-							"TXN_AMOUNT" 		=> $amount,
-							"MOBILE_NO" 		=> $mobile_no,
-							"EMAIL" 			=> $email
-						);
+		$paramData = array('amount' => $amount, 'order_id' => $order_id, 'cust_id' => $cust_id, 'email' => $email, 'mobile_no' => $mobile_no);
 
-		$parameters["CHECKSUMHASH"]		= PaytmChecksum::generateSignature($parameters, $this->config->get('payment_paytm_merchant_key'));
-
-		$parameters["X-REQUEST-ID"] 	=  PaytmConstants::X_REQUEST_ID;
-
-		$data['paytm_fields']			= $parameters;
-		$data['action']					= PaytmHelper::getTransactionURL($this->config->get('payment_paytm_environment'));
+		$data = $this->blinkCheckoutSend($paramData);
+		$data['srcUrl'] = str_replace('MID',$this->config->get('payment_paytm_merchant_id'), PaytmHelper::getPaytmURL(PaytmConstants::CHECKOUT_JS_URL, $this->config->get('payment_paytm_environment')));
+		
 		$data['button_confirm']			= $this->language->get('button_confirm');
 		
 		if(file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/extension/payment/paytm')) {
@@ -56,6 +42,53 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		}
 	}
 
+	private function blinkCheckoutSend($paramData = array()){
+		$apiURL = PaytmHelper::getPaytmURL(PaytmConstants::INITIATE_TRANSACTION_URL, $this->config->get('payment_paytm_environment')) . '?mid='.$this->config->get('payment_paytm_merchant_id').'&orderId='.$paramData['order_id'];
+		$paytmParams = array();
+
+		$paytmParams["body"] = array(
+			"requestType"   => "Payment",
+			"mid"           => $this->config->get('payment_paytm_merchant_id'),
+			"websiteName"   => $this->config->get('payment_paytm_website'),
+			"orderId"       => $paramData['order_id'],
+			"callbackUrl"   => $this->getCallbackUrl(),
+			"txnAmount"     => array(
+				"value"     => $paramData['amount'],
+				"currency"  => "INR",
+			),
+			"userInfo"      => array(
+				"custId"    => $paramData['cust_id'],
+			),
+		);
+
+		/*
+		* Generate checksum by parameters we have in body
+		* Find your Merchant Key in your Paytm Dashboard at https://dashboard.paytm.com/next/apikeys 
+		*/
+		$checksum = PaytmChecksum::generateSignature(json_encode($paytmParams["body"], JSON_UNESCAPED_SLASHES), $this->config->get('payment_paytm_merchant_key'));
+
+		$paytmParams["head"] = array(
+			"signature"	=> $checksum
+		);
+
+		$postData = json_encode($paytmParams, JSON_UNESCAPED_SLASHES);
+
+		$response = PaytmHelper::executecUrl($apiURL, $postData);
+
+
+
+		$data = array('orderId' => $paramData['order_id'], 'amount' => $paramData['amount']);
+		$data['response'] = json_encode($response);
+		if(!empty($response['body']['txnToken'])){
+			$data['txnToken'] = $response['body']['txnToken'];
+			$data['message'] = $this->language->get('success_token_generated');
+		}else{
+			$data['txnToken'] = '';
+			$data['message'] = $this->language->get('error_something_went_wrong');
+		}
+		return $data;
+	}
+
 	/**
 	* get Default callback url
 	*/
@@ -63,7 +96,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		if(!empty(PaytmConstants::CUSTOM_CALLBACK_URL)){
 			return PaytmConstants::CUSTOM_CALLBACK_URL;
 		}else{
-			return ($this->request->server['HTTPS']) ? $this->url->link('extension/payment/paytm/callback','',true) : $this->url->link('extension/payment/paytm/callback');
+			return $this->url->link('extension/payment/paytm/callback');
 		}	
 	}
 	
@@ -118,11 +151,12 @@ class ControllerExtensionPaymentPaytm extends Controller {
 						
 						$reqParams['CHECKSUMHASH'] = PaytmChecksum::generateSignature($reqParams, $this->config->get("payment_paytm_merchant_key"));
 						
-						if($data['payment_status'] == 'TXT_SUCCESS' || $data['payment_status'] == 'PENDING'){
+						if($data['payment_status'] == 'TXN_SUCCESS' || $data['payment_status'] == 'PENDING'){
 							/* number of retries untill cURL gets success */
 							$retry = 1;
 							do{
-								$resParams = PaytmHelper::executecUrl(PaytmHelper::getTransactionStatusURL($this->config->get('payment_paytm_environment')), $reqParams);
+								$postData = 'JsonData='.urlencode(json_encode($reqParams));
+								$resParams = PaytmHelper::executecUrl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->config->get('payment_paytm_environment')), $postData);
 								$retry++;
 							} while(!$resParams['STATUS'] && $retry < PaytmConstants::MAX_RETRY_COUNT);
 							/* number of retries untill cURL gets success */
@@ -252,8 +286,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 				$testing_urls = array(
 									$server,
 									"https://www.gstatic.com/generate_204",
-									PaytmConstants::TRANSACTION_STATUS_URL_PRODUCTION,
-									PaytmConstants::TRANSACTION_STATUS_URL_STAGING
+									PaytmConstants::PRODUCTION_HOST.PaytmConstants::ORDER_STATUS_URL , PaytmConstants::STAGING_HOST.PaytmConstants::ORDER_STATUS_URL
 								);
 			}
 
@@ -276,7 +309,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 					$debug[$key]["info"][] = "Error: <b>" . curl_error($ch) . "</b>";
 				}
 
-				if((!empty($this->request->get["url"])) || (in_array($url, array(PaytmConstants::TRANSACTION_STATUS_URL_PRODUCTION , PaytmConstants::TRANSACTION_STATUS_URL_STAGING)))){
+				if((!empty($this->request->get["url"])) || (in_array($url, array(PaytmConstants::PRODUCTION_HOST.PaytmConstants::ORDER_STATUS_URL , PaytmConstants::STAGING_HOST.PaytmConstants::ORDER_STATUS_URL)))){
 					$debug[$key]["info"][] = "Response: <br/><!----- Response Below ----->" . $res;
 				}
 

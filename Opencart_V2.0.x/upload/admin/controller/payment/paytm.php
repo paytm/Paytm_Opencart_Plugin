@@ -37,8 +37,7 @@ class ControllerPaymentPaytm extends Controller {
 			$this->model_setting_setting->editSetting('paytm', $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
-		
-			if(!PaytmHelper::validateCurl(PaytmHelper::getTransactionStatusURL($this->request->post['paytm_environment']))){
+			if(!PaytmHelper::validateCurl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->config->get('paytm_environment')))){
 				$this->session->data['warning'] = $this->language->get('error_curl_warning');
 				$this->response->redirect($this->url->link('payment/paytm', 'token=' . $this->session->data['token'], 'SSL'));
 			}
@@ -254,7 +253,7 @@ class ControllerPaymentPaytm extends Controller {
 					
 				$retry = 1;
 				do{
-					$resParams = PaytmHelper::executecUrl(PaytmHelper::getTransactionStatusURL($this->config->get('paytm_environment')), $reqParams);
+					$resParams = PaytmHelper::executecUrl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->config->get('paytm_environment')), $reqParams);
 					$retry++;
 				} while(!$resParams['STATUS'] && $retry < PaytmConstants::MAX_RETRY_COUNT);
 

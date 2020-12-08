@@ -22,25 +22,13 @@ class PaytmHelper{
 		}
 		return $order_id;
 	}
-
-	/**
-	* exclude timestap with order id
-	*/
-	public static function getTransactionURL($isProduction = 0){		
+	
+	public static function getPaytmURL($url = false, $isProduction = 0){
+		if(!$url) return false; 
 		if($isProduction == 1){
-			return PaytmConstants::TRANSACTION_URL_PRODUCTION;
+			return PaytmConstants::PRODUCTION_HOST . $url;
 		}else{
-			return PaytmConstants::TRANSACTION_URL_STAGING;			
-		}
-	}
-	/**
-	* exclude timestap with order id
-	*/
-	public static function getTransactionStatusURL($isProduction = 0){		
-		if($isProduction == 1){
-			return PaytmConstants::TRANSACTION_STATUS_URL_PRODUCTION;
-		}else{
-			return PaytmConstants::TRANSACTION_STATUS_URL_STAGING;			
+			return PaytmConstants::STAGING_HOST . $url;			
 		}
 	}
 	/**
@@ -67,10 +55,8 @@ class PaytmHelper{
 		return false;
 	}
 
-	public static function executecUrl($apiURL, $requestParamList) {
-		$responseParamList = array();
-		$JsonData = json_encode($requestParamList);
-		$postData = 'JsonData='.urlencode($JsonData);
+	public static function executecUrl($apiURL, $postData) {
+		
 		$ch = curl_init($apiURL);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
