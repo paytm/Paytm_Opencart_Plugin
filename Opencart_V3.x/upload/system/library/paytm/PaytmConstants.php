@@ -11,7 +11,7 @@ class PaytmConstants{
 
 	CONST SAVE_PAYTM_RESPONSE 					= true;
 	CONST CHANNEL_ID							= "WEB";
-	CONST APPEND_TIMESTAMP						= false;
+	CONST APPEND_TIMESTAMP						= true;
 	CONST ONLY_SUPPORTED_INR					= true;
 	CONST X_REQUEST_ID							= "PLUGIN_OPENCART_" . VERSION;
 

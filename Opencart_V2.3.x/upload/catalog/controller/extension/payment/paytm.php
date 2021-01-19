@@ -72,6 +72,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$data['txnToken'] = $response['body']['txnToken'];
 		}else{
 			$data['txnToken'] = '';
+			$data['message'] = $this->language->get('error_something_went_wrong');
 		}
 		$data['apiurl'] = $apiURL;
 		return $data;

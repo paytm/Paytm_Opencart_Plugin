@@ -1,25 +1,30 @@
-<script type="application/javascript" crossorigin="anonymous" src="{{ srcUrl }}" onload="alert('Script loaded!'); loaded=true;"></script>
+<script type="application/javascript" crossorigin="anonymous" src="{{ srcUrl }}"  loaded=true;"></script>
 <div class="buttons">
 
-  <div class="pull-right">
+  <div class="pull-right text-right" id="btn-confirm-paytm">
     <input type="button" value="{{ button_confirm }}" onClick="openJsCheckout();" id="button-confirm" class="btn btn-primary" />
   </div>
-  <span style="color:red;" id="paytmerror"><span>
   </div>
+  <style>
+  #paytmError{ color:red; }
+  </style>
   <script type="text/javascript">
   function openJsCheckout(){
-  document.getElementById("paytmerror").innerHTML="";
+
+  if(document.getElementById("paytmError")!==null){ 
+      document.getElementById("paytmError").remove(); 
+  }
+
   var transactionToken = "{{ txnToken }}";
-  if(transactionToken!=''){
-   invokeBlinkCheckoutPopup("{{ txnToken }}", "{{ orderId }}", "{{ amount }}");
-  }else{
-  document.getElementById("paytmerror").innerHTML="{{ message }}";
+  if(transactionToken){
+      invokeBlinkCheckoutPopup("{{ txnToken }}", "{{ orderId }}", "{{ amount }}");
+    }else{
+      document.getElementById("btn-confirm-paytm").innerHTML += '<div id="paytmError">{{ message }}</div>';
   }
   }
 
  
   function invokeBlinkCheckoutPopup(txnToken, orderId, amount){
-    //   console.log(txnToken, orderId, amount);
         var config = {
          "root": "",
          "flow": "DEFAULT",
@@ -31,9 +36,9 @@
          },
          "handler": {
             "notifyMerchant": function(eventName,data){
-              if(eventName == 'SESSION_EXPIRED'){
-                location.reload(); 
-              }
+        if(eventName == 'SESSION_EXPIRED'){
+          location.reload(); 
+        }
             } 
           }
         };

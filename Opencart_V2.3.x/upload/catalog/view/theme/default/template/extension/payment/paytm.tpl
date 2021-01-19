@@ -1,30 +1,42 @@
 <script type="application/javascript" crossorigin="anonymous" src="<?php echo $srcUrl; ?>"></script>
 <div class="buttons">
-  <div class="pull-right">
-    <input type="submit" value="<?php echo $button_confirm; ?>" id="button-confirm" class="btn btn-primary" />
+  <div class="pull-right text-right" id="btn-confirm-paytm">
+    <input type="submit" value="<?php echo $button_confirm; ?>" onClick="openJsCheckout();" id="button-confirm" class="btn btn-primary" />
   </div>
 </div>
+<style>
+#paytmError{ color:red; }
+</style>
 <script type="text/javascript">
-  $('#button-confirm').on('click', function() {
-	invokeBlinkCheckoutPopup("<?php echo $txnToken; ?>", "<?php echo $orderId; ?>", "<?php echo $amount; ?>");
-  });
+  function openJsCheckout(){
+    if(document.getElementById("paytmError")!==null){ 
+      document.getElementById("paytmError").remove(); 
+    }
+    var txntoken = "<?php echo $txnToken; ?>";
+    if(txntoken){
+      invokeBlinkCheckoutPopup("<?php echo $txnToken; ?>", "<?php echo $orderId; ?>", "<?php echo $amount; ?>");
+    }else{
+      document.getElementById("btn-confirm-paytm").innerHTML += '<div id="paytmError"><?php echo $message; ?></div>';
+    }
+  }
 
   function invokeBlinkCheckoutPopup(txnToken, orderId, amount){
-    //   console.log(txnToken, orderId, amount);
+    //  console.log(txnToken, orderId, amount);
         var config = {
          "root": "",
          "flow": "DEFAULT",
          "data": {
-          "orderId": orderId /* update order id */,
-          "token": txnToken /* update token value */,
+          "orderId": orderId ,
+          "token": txnToken,
           "tokenType": "TXN_TOKEN",
-          "amount": amount /* update amount */
+          "amount": amount 
          },
          "handler": {
             "notifyMerchant": function(eventName,data){
-				if(eventName == 'SESSION_EXPIRED'){
-					location.reload(); 
-				}
+               //   console.log(eventName);
+              if(eventName == 'SESSION_EXPIRED'){
+                location.reload(); 
+              }
             } 
           }
         };
