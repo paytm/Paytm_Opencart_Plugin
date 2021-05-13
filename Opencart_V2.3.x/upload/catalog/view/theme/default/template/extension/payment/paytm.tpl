@@ -31,6 +31,10 @@
           "tokenType": "TXN_TOKEN",
           "amount": amount 
          },
+         "integration": {
+                          "platform": "Opencart",
+                          "version": "<?php echo $version; ?>"
+                      },
          "handler": {
             "notifyMerchant": function(eventName,data){
                //   console.log(eventName);

@@ -6,7 +6,8 @@ $_['heading_title']                 = 'Thank you for shopping with %s .... ';
 $_['button_confirm']                = 'Confirm Order';
 
 // Text
-$_['text_title']                    = 'Credit Card / Debit Card (Paytm PG)';
+//$_['text_title']                    = 'Credit Card / Debit Card (Paytm PG)';
+$_['text_title']                    = '<img src="image/payment/paytm/paytm_logo.png" alt="Paytm" title="Paytm"><img src="image/payment/paytm/sub_logo.png" alt="Paytm" title="Paytm">';
 $_['text_response']                 = 'Response from Paytm: %s';
 
 $_['success_token_generated']       = 'Token Generated successfully.';

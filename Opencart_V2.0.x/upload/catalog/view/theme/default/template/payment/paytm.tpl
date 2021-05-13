@@ -31,6 +31,10 @@
           "tokenType": "TXN_TOKEN",
           "amount": amount /* update amount */
          },
+         "integration": {
+                          "platform": "Opencart",
+                          "version": "<?php echo $version; ?>"
+                      },
          "handler": {
             "notifyMerchant": function(eventName,data){
 				if(eventName == 'SESSION_EXPIRED'){

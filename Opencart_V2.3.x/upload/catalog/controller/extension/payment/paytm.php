@@ -75,6 +75,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$data['message'] = $this->language->get('error_something_went_wrong');
 		}
 		$data['apiurl'] = $apiURL;
+		$data['version']=VERSION.'|'.PaytmConstants::PLUGIN_VERSION;
 		return $data;
 	}
 

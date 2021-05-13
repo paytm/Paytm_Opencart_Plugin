@@ -86,6 +86,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$data['txnToken'] = '';
 			$data['message'] = $this->language->get('error_something_went_wrong');
 		}
+		$data['version']=VERSION.'|'.PaytmConstants::PLUGIN_VERSION;
 		return $data;
 	}
 
