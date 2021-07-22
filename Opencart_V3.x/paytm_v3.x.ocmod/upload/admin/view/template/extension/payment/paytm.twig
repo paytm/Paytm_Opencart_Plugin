@@ -1,0 +1,199 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">
+				<button type="submit" form="form-paytm" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+				<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+			<h1>{{ heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if error_warning %}
+		<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %}
+		{% if warning %}
+		<div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> {{ warning }}
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-paytm" class="form-horizontal">
+					<div class="form-group required">
+						<label class="control-label col-sm-3" for="payment_paytm_merchant_id">
+							<span data-toggle="tooltip" title="{{ entry_merchant_id_help }}">{{ entry_merchant_id }}</span>
+						</label>
+						<div class="col-sm-9">
+							<input type="text" name="payment_paytm_merchant_id" id="payment_paytm_merchant_id" value="{{ payment_paytm_merchant_id }}" class="form-control"/>
+							{% if error_merchant_id %}
+							<div class="text-danger">{{ error_merchant_id }}</div>
+							{% endif %}
+						</div>
+					</div>
+					<div class="form-group required">
+						<label class="control-label col-sm-3" for="payment_paytm_merchant_key">
+							<span data-toggle="tooltip" title="{{ entry_merchant_key_help }}">{{ entry_merchant_key }}</span>
+						</label>
+						<div class="col-sm-9">
+							<input type="text" name="payment_paytm_merchant_key" id="payment_paytm_merchant_key" value="{{ payment_paytm_merchant_key }}" class="form-control"/>
+							{% if error_merchant_key %}
+							<div class="text-danger">{{ error_merchant_key }}</div>
+							{% endif %}
+						</div>
+					</div>
+					<div class="form-group required">
+						<label class="control-label col-sm-3" for="payment_paytm_website">
+							<span data-toggle="tooltip" title="{{ entry_website_help }}">{{ entry_website }}</span>
+						</label>
+						<div class="col-sm-9">
+							<input type="text" name="payment_paytm_website" id="payment_paytm_website" value="{{ payment_paytm_website }}" class="form-control"/>
+							{% if error_website %}
+							<div class="text-danger">{{ error_website }}</div>
+							{% endif %}
+						</div>
+					</div>
+					<div class="form-group required">
+						<label class="control-label col-sm-3" for="payment_paytm_industry_type">
+							<span data-toggle="tooltip" title="{{ entry_industry_type_help }}">{{ entry_industry_type }}</span>
+						</label>
+						<div class="col-sm-9">
+							<input type="text" name="payment_paytm_industry_type" id="payment_paytm_industry_type" value="{{ payment_paytm_industry_type }}" class="form-control"/>
+							{% if error_industry_type %}
+							<div class="text-danger">{{ error_industry_type }}</div>
+							{% endif %}
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_environment">
+							<span data-toggle="tooltip" title="{{ entry_environment_help }}">{{ entry_environment }}</span>
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_environment" class="form-control">
+								{% if payment_paytm_environment == 1 %}
+								<option value="0">{{ text_staging }}</option>
+								<option value="1" selected="selected">{{ text_production}}</option>
+								{% else %}
+									<option value="0" selected="selected">{{ text_staging }}</option>
+									<option value="1">{{ text_production }}</option>
+								{% endif %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_order_success_status_id">
+							<span data-toggle="tooltip" title="{{ entry_order_success_status_help }}">{{ entry_order_success_status }}</span>
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_order_success_status_id" id="payment_paytm_order_success_status_id" class="form-control">
+							{% for order_status in order_statuses %}
+								{% if order_status['order_status_id'] == payment_paytm_order_success_status_id %}
+								<option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+								{% else %}
+								<option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+								{% endif %}
+							{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_order_pending_status_id">
+							<span data-toggle="tooltip" title="{{ entry_order_pending_status_help }}">{{ entry_order_pending_status }}</span>
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_order_pending_status_id" id="payment_paytm_order_pending_status_id" class="form-control">
+							{% for order_status in order_statuses %}
+								{% if order_status['order_status_id'] == payment_paytm_order_pending_status_id %}
+								<option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+								{% else %}
+								<option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+								{% endif %}
+							{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_order_failed_status_id">
+							<span data-toggle="tooltip" title="{{ entry_order_failed_status_help }}">{{ entry_order_failed_status }}</span>
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_order_failed_status_id" id="payment_paytm_order_failed_status_id" class="form-control">
+							{% for order_status in order_statuses %}
+								{% if order_status['order_status_id'] == payment_paytm_order_failed_status_id %}
+								<option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+								{% else %}
+								<option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+								{% endif %}
+							{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="input-total"><span data-toggle="tooltip" title="{{ entry_total_help }}">{{ entry_total }}</span></label>
+						<div class="col-sm-9">
+							<input type="text" name="payment_paytm_total" value="{{ payment_paytm_total }}" placeholder="{{ entry_total }}" id="input-total" class="form-control" />
+						</div>
+						</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="input-geo-zone">{{ entry_geo_zone }}</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_geo_zone_id" id="input-geo-zone" class="form-control">
+								<option value="0">{{ text_all_zones }}</option>
+								{% for geo_zone in geo_zones %}
+								{% if geo_zone.geo_zone_id == payment_paytm_geo_zone_id %}
+								<option value="{{ geo_zone.geo_zone_id }}" selected="selected">{{ geo_zone.name }}</option>
+								{% else %}
+								<option value="{{ geo_zone.geo_zone_id }}">{{ geo_zone.name }}</option>
+								{% endif %}
+								{% endfor %}
+							</select>
+						</div>
+						</div>
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_status">
+							<span data-toggle="tooltip" title="{{ entry_status_help }}">{{ entry_status }}</span>
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_status" class="form-control">
+								{% if payment_paytm_status %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0">{{ text_disabled }}</option>
+								{% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+						<div class="col-sm-9">
+							<input type="text" name="payment_paytm_sort_order" value="{{ payment_paytm_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+						</div>
+					</div>								
+				</form>
+			</div>
+			<div class="panel-footer">
+				<div class="text-center">
+					<span><b>{{text_php_version}}</b> {{ php_version }}</span>
+					<span> | </span>
+					<span><b>{{text_curl_version}}</b> {{ curl_version }}</span>
+					<span> | </span>
+					<span><b>{{text_opencart_version}}</b> {{ opencart_version }}</span>
+					<span> | </span>
+					<span><b>{{text_last_updated}}</b> {{ last_updated }}</span>
+					<span> | </span>
+					<span><b><a target="_blank" href="https://developer.paytm.com/docs/eCommerce-plugin/opencart/#oc3-x">{{text_developer_docs}}</a></b></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{ footer }}

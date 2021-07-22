@@ -1,0 +1,60 @@
+<script type="application/javascript" crossorigin="anonymous" src="{{ srcUrl }}"  loaded=true;"></script>
+<div class="buttons">
+
+  <div class="pull-right text-right" id="btn-confirm-paytm">
+    <input type="button" value="{{ button_confirm }}" onClick="openJsCheckout();" id="button-confirm" class="btn btn-primary" />
+  </div>
+  </div>
+  <style>
+  #paytmError{ color:red; }
+  </style>
+  <script type="text/javascript">
+  function openJsCheckout(){
+
+  if(document.getElementById("paytmError")!==null){ 
+      document.getElementById("paytmError").remove(); 
+  }
+
+  var transactionToken = "{{ txnToken }}";
+  if(transactionToken){
+      invokeBlinkCheckoutPopup("{{ txnToken }}", "{{ orderId }}", "{{ amount }}");
+    }else{
+      document.getElementById("btn-confirm-paytm").innerHTML += '<div id="paytmError">{{ message }}</div>';
+  }
+  }
+
+ 
+  function invokeBlinkCheckoutPopup(txnToken, orderId, amount){
+        var config = {
+         "root": "",
+         "flow": "DEFAULT",
+         "data": {
+          "orderId": orderId,
+          "token": txnToken,
+          "tokenType": "TXN_TOKEN",
+          "amount": amount
+         },
+         "integration": {
+                          "platform": "Opencart",
+                          "version": "{{ version }}"
+                      },
+         "handler": {
+            "notifyMerchant": function(eventName,data){
+        if(eventName == 'SESSION_EXPIRED'){
+          location.reload(); 
+        }
+            } 
+          }
+        };
+      
+        if(window.Paytm && window.Paytm.CheckoutJS){
+                // initialze configuration using init method 
+                window.Paytm.CheckoutJS.init(config).then(function onSuccess() {
+                   // after successfully update configuration invoke checkoutjs
+                   window.Paytm.CheckoutJS.invoke();
+                }).catch(function onError(error){
+                   // console.log("error => ",error);
+                });
+        } 
+    }
+</script>
