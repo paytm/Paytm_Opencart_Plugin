@@ -177,7 +177,55 @@
 						<div class="col-sm-9">
 							<input type="text" name="payment_paytm_sort_order" value="{{ payment_paytm_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
 						</div>
-					</div>								
+					</div>	
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_bankoffer">
+							{{ entry_bank_offer }}
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_bankoffer" class="form-control">
+								{% if payment_paytm_bankoffer %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0">{{ text_disabled }}</option>
+								{% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+						</div>
+					</div>	
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_emisubvention">
+							{{ entry_emi_subvention }}
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_emisubvention" class="form-control">
+								{% if payment_paytm_emisubvention %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0">{{ text_disabled }}</option>
+								{% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+						</div>
+					</div>	
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_dcemi">
+							{{ entry_dc_emi }}
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_dcemi" class="form-control">
+								{% if payment_paytm_dcemi %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0">{{ text_disabled }}</option>
+								{% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+						</div>
+					</div>							
 				</form>
 			</div>
 			<div class="panel-footer">

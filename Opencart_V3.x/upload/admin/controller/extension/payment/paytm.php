@@ -192,6 +192,22 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$data['payment_paytm_sort_order'] = $this->request->post['payment_paytm_sort_order'];
 		} else {
 			$data['payment_paytm_sort_order'] = (int)$this->config->get('payment_paytm_sort_order');
+		}	
+
+		if (isset($this->request->post['payment_paytm_bankoffer'])) {
+			$data['payment_paytm_bankoffer'] = $this->request->post['payment_paytm_bankoffer'];
+		} else {
+			$data['payment_paytm_bankoffer'] = (int)$this->config->get('payment_paytm_bankoffer');
+		}		
+		if (isset($this->request->post['payment_paytm_emisubvention'])) {
+			$data['payment_paytm_emisubvention'] = $this->request->post['payment_paytm_emisubvention'];
+		} else {
+			$data['payment_paytm_emisubvention'] = (int)$this->config->get('payment_paytm_emisubvention');
+		}		
+		if (isset($this->request->post['payment_paytm_dcemi'])) {
+			$data['payment_paytm_dcemi'] = $this->request->post['payment_paytm_dcemi'];
+		} else {
+			$data['payment_paytm_dcemi'] = (int)$this->config->get('payment_paytm_dcemi');
 		}		
 
 		// Check cUrl is enabled or not

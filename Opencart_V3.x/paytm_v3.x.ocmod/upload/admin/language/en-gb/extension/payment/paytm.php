@@ -59,6 +59,10 @@ $_['entry_status']							= 'Status';
 $_['entry_status_help']						= 'Enable this to accept payment using Paytm Gateway';
 $_['entry_sort_order']						= 'Sort Order';
 
+$_['entry_bank_offer']						= 'Enable Bank Offer';
+$_['entry_emi_subvention']					= 'Enable EMI Subvention';
+$_['entry_dc_emi']						    = 'Enable DC EMI';
+
 
 // Error
 $_['error_permission']						= 'Warning: You do not have permission to modify Paytm Payment!';

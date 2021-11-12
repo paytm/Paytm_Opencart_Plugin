@@ -53,14 +53,28 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			"orderId"       => $paramData['order_id'],
 			"callbackUrl"   => $this->getCallbackUrl(),
 			"txnAmount"     => array(
-				"value"     => $paramData['amount'],
+				"value"     => number_format($paramData['amount'],2),
 				"currency"  => "INR",
 			),
 			"userInfo"      => array(
 				"custId"    => $paramData['cust_id'],
 			),
 		);
-
+		// for bank offers
+        if($this->config->get('payment_paytm_bankoffer') ==1){
+            $paytmParams["body"]["simplifiedPaymentOffers"]["applyAvailablePromo"]= "true";
+        }
+        // for emi subvention
+        if($this->config->get('payment_paytm_emisubvention') ==1){
+            $paytmParams["body"]["simplifiedSubvention"]["customerId"]= $paramData['cust_id'];
+            $paytmParams["body"]["simplifiedSubvention"]["subventionAmount"]= number_format($paramData['amount'],2);
+            $paytmParams["body"]["simplifiedSubvention"]["selectPlanOnCashierPage"]= "true";
+            //$paytmParams["body"]["simplifiedSubvention"]["offerDetails"]["offerId"]= 1;
+        }
+        // for dc emi
+        if($this->config->get('payment_paytm_dcemi') ==1){
+            $paytmParams["body"]["userInfo"]["mobile"]= $paramData['mobile_no'];
+        }
 		/*
 		* Generate checksum by parameters we have in body
 		* Find your Merchant Key in your Paytm Dashboard at https://dashboard.paytm.com/next/apikeys 
@@ -72,7 +86,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		);
 
 		$postData = json_encode($paytmParams, JSON_UNESCAPED_SLASHES);
-
+		
 		$response = PaytmHelper::executecUrl($apiURL, $postData);
 
 
