@@ -30,12 +30,14 @@
 					<div class="form-group required">
 						<label class="control-label col-sm-3" for="payment_paytm_merchant_id">
 							<span data-toggle="tooltip" title="{{ entry_merchant_id_help }}">{{ entry_merchant_id }}</span>
+
 						</label>
 						<div class="col-sm-9">
 							<input type="text" name="payment_paytm_merchant_id" id="payment_paytm_merchant_id" value="{{ payment_paytm_merchant_id }}" class="form-control"/>
 							{% if error_merchant_id %}
 							<div class="text-danger">{{ error_merchant_id }}</div>
 							{% endif %}
+							<span>Based on the selected Environment Mode, copy the relevant Merchant ID for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
 						</div>
 					</div>
 					<div class="form-group required">
@@ -47,6 +49,7 @@
 							{% if error_merchant_key %}
 							<div class="text-danger">{{ error_merchant_key }}</div>
 							{% endif %}
+							<span>Based on the selected Environment Mode, copy the Merchant Key for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
 						</div>
 					</div>
 					<div class="form-group required">
@@ -58,6 +61,7 @@
 							{% if error_website %}
 							<div class="text-danger">{{ error_website }}</div>
 							{% endif %}
+							<span>Enter "WEBSTAGING" for test/integration environment & "DEFAULT" for production environment.</span>
 						</div>
 					</div>
 					<div class="form-group required">
@@ -69,6 +73,7 @@
 							{% if error_industry_type %}
 							<div class="text-danger">{{ error_industry_type }}</div>
 							{% endif %}
+							<span>Login to <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a> & copy paste the industry type available there.</span>
 						</div>
 					</div>
 					<div class="form-group">
@@ -85,6 +90,7 @@
 									<option value="1">{{ text_production }}</option>
 								{% endif %}
 							</select>
+							<span>Select "Staging" for test/integration environment & "Production" once you move to production environment.</span>
 						</div>
 					</div>
 					<div class="form-group">
@@ -192,6 +198,7 @@
 								<option value="0" selected="selected">{{ text_disabled }}</option>
 								{% endif %}
 							</select>
+							<span>Get your Bank Offer plans configured at Paytm & then Select "Yes" to provide Bank Offer to your customers.</span>
 						</div>
 					</div>	
 					<div class="form-group">
@@ -208,6 +215,7 @@
 								<option value="0" selected="selected">{{ text_disabled }}</option>
 								{% endif %}
 							</select>
+							<span>Get your EMI Subvention plans configured at Paytm & then Select "Yes" to offer EMI Subvention to your customers.</span>
 						</div>
 					</div>	
 					<div class="form-group">
@@ -224,6 +232,7 @@
 								<option value="0" selected="selected">{{ text_disabled }}</option>
 								{% endif %}
 							</select>
+							<span>Get DC EMI enabled for your MID and then select "Yes" to offer DC EMI to your customer. Customer mobile number is mandatory for DC EMI.</span>
 						</div>
 					</div>							
 				</form>
