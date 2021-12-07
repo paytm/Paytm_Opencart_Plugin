@@ -53,7 +53,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			"orderId"       => $paramData['order_id'],
 			"callbackUrl"   => $this->getCallbackUrl(),
 			"txnAmount"     => array(
-				"value"     => number_format($paramData['amount'],2),
+				"value"     => $paramData['amount'],
 				"currency"  => "INR",
 			),
 			"userInfo"      => array(
@@ -67,7 +67,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
         // for emi subvention
         if($this->config->get('payment_paytm_emisubvention') ==1){
             $paytmParams["body"]["simplifiedSubvention"]["customerId"]= $paramData['cust_id'];
-            $paytmParams["body"]["simplifiedSubvention"]["subventionAmount"]= number_format($paramData['amount'],2);
+            $paytmParams["body"]["simplifiedSubvention"]["subventionAmount"]= $paramData['amount'];
             $paytmParams["body"]["simplifiedSubvention"]["selectPlanOnCashierPage"]= "true";
             //$paytmParams["body"]["simplifiedSubvention"]["offerDetails"]["offerId"]= 1;
         }
