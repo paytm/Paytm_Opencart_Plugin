@@ -7,10 +7,8 @@ $_['button_confirm']                = 'Confirm Order';
 
 // Text
 //$_['text_title']                    = 'Credit Card / Debit Card (Paytm PG)';
-$_['text_title']                    = '<img src="https://raw.githubusercontent.com/paytm/Paytm_Magento_Plugin/master/paytm_logo.png" alt="Paytm" title="Paytm"><img src="https://raw.githubusercontent.com/paytm/Paytm_Magento_Plugin/master/sub_paytm.png" alt="Paytm" title="Paytm">';
+//$_['text_title']                    = '<img src="https://raw.githubusercontent.com/paytm/Paytm_Magento_Plugin/master/paytm_logo_paymodes.svg" width="250px" alt="Paytm" title="Paytm">';
 $_['text_response']                 = 'Response from Paytm: %s';
-
-$_['success_token_generated']       = 'Token Generated successfully.';
 
 $_['text_success']                  = 'Your payment has been successfully received.';
 $_['text_success_wait']             = '<b><span style="color: #4caf50">Please wait...</span></b> while we finish processing your order.<br>If you are not automatically re-directed in 10 seconds, please click <a href="%s">here</a>.';

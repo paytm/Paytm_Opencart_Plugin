@@ -24,6 +24,9 @@ class PaytmConstants{
 
 	CONST CUSTOM_CALLBACK_URL					= "";
 	CONST IS_BLINK_SUPPORTED					= true;
+
+	CONST COLORED_LOGO_URL						= "https://raw.githubusercontent.com/paytm/Paytm_Magento_Plugin/master/paytm_logo_paymodes.svg";
+	CONST WHITE_LOGO_URL						= "https://raw.githubusercontent.com/paytm/Paytm_Magento_Plugin/master/paytm_logo_invert.svg";
 }
 
 ?>

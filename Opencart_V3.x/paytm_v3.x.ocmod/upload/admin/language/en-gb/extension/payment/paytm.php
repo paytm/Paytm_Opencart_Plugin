@@ -7,7 +7,7 @@ $_['text_payment']							= 'Payment';
 $_['text_extension']						= 'Extension';
 $_['text_payments']							= 'Payments';
 $_['text_success']							= 'Success: You have modified paytm account details!';
-$_['text_paytm']							= '<img src="view/image/payment/paytm_logo.png" alt="Paytm" title="Paytm" style="border: 1px solid #EEEEEE;" />';
+// $_['text_paytm']							= '<img src="https://raw.githubusercontent.com/paytm/Paytm_Magento_Plugin/master/paytm_logo_paymodes.svg" alt="Paytm" title="Paytm" style="border: 1px solid #EEEEEE;" />';
 $_['text_edit']								= 'Edit Paytm Payments';
 $_['text_opencart_version']					= 'Opencart Version';
 $_['text_curl_version']						= 'cURL Version';

@@ -19,11 +19,14 @@ class ModelExtensionPaymentPaytm extends Model {
 		$status = (isset($this->session->data['currency']) && $this->session->data['currency'] != 'INR' && PaytmConstants::ONLY_SUPPORTED_INR) ? false : $status;
 
 		$method_data = array();
+		$white_logo= PaytmConstants::WHITE_LOGO_URL;
+		$colored_logo= PaytmConstants::COLORED_LOGO_URL;
+        $invert_logo = $this->config->get('payment_paytm_logo')? $white_logo : $colored_logo;
 
 		if ($status) {
 			$method_data = array(
 				'code'       => 'paytm',
-				'title'      => $this->language->get('text_title'),
+				'title'      => '<img src="'.$invert_logo.'" width="300px" alt="Paytm" title="Paytm">',
 				'terms'      => '',
 				'sort_order' => $this->config->get('payment_paytm_sort_order')
 			);

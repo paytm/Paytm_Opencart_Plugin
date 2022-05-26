@@ -208,6 +208,11 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$data['payment_paytm_dcemi'] = $this->request->post['payment_paytm_dcemi'];
 		} else {
 			$data['payment_paytm_dcemi'] = (int)$this->config->get('payment_paytm_dcemi');
+		}	
+		if (isset($this->request->post['payment_paytm_logo'])) {
+			$data['payment_paytm_logo'] = $this->request->post['payment_paytm_logo'];
+		} else {
+			$data['payment_paytm_logo'] = (int)$this->config->get('payment_paytm_logo');
 		}		
 
 		// Check cUrl is enabled or not
