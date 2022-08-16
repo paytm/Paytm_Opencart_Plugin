@@ -127,17 +127,29 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$data['payment_paytm_merchant_key'] = $this->config->get('payment_paytm_merchant_key');
 		}
 		
-		if (isset($this->request->post['payment_paytm_website'])) {
+		/*if (isset($this->request->post['payment_paytm_website'])) {
+
 			$data['payment_paytm_website'] = $this->request->post['payment_paytm_website'];
 		} else {
 			$data['payment_paytm_website'] = $this->config->get('payment_paytm_website');
-		}
+		}*/
 
-		if (isset($this->request->post['payment_paytm_industry_type'])) {
-			$data['payment_paytm_industry_type'] = $this->request->post['payment_paytm_industry_type'];
-		} else {
-			$data['payment_paytm_industry_type'] = $this->config->get('payment_paytm_industry_type');
+		// Code for website Name 
+
+			if (isset($this->request->post['payment_paytm_website'])) {
+			$data['payment_paytm_website'] = $this->request->post['payment_paytm_website'];
+		} else if ($this->config->get('payment_paytm_website')) {
+			$data['payment_paytm_website'] = $this->config->get('payment_paytm_website');
+		}else{
+			$data['payment_paytm_website'] = 0;
 		}
+		// end 
+
+		// if (isset($this->request->post['payment_paytm_industry_type'])) {
+		// 	$data['payment_paytm_industry_type'] = $this->request->post['payment_paytm_industry_type'];
+		// } else {
+		// 	$data['payment_paytm_industry_type'] = $this->config->get('payment_paytm_industry_type');
+		// }
 	
 		if (isset($this->request->post['payment_paytm_environment'])) {
 			$data['payment_paytm_environment'] = $this->request->post['payment_paytm_environment'];
@@ -313,9 +325,9 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$this->error['website'] = $this->language->get('error_website');
 		}
 
-		if (!$this->request->post['payment_paytm_industry_type']) {
-			$this->error['industry_type'] = $this->language->get('error_industry_type');
-		}
+		// if (!$this->request->post['payment_paytm_industry_type']) {
+		// 	$this->error['industry_type'] = $this->language->get('error_industry_type');
+		// }
 
 		if (!in_array($this->request->post['payment_paytm_environment'], array("1","0"))) {
 			$this->error['environment'] = $this->language->get('error_environment');

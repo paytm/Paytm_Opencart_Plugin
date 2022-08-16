@@ -27,6 +27,23 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-paytm" class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_environment">
+							<span data-toggle="tooltip" title="{{ entry_environment_help }}">{{ entry_environment }}</span>
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_environment" class="form-control">
+								{% if payment_paytm_environment == 1 %}
+								<option value="0">{{ text_staging }}</option>
+								<option value="1" selected="selected">{{ text_production}}</option>
+								{% else %}
+									<option value="0" selected="selected">{{ text_staging }}</option>
+									<option value="1">{{ text_production }}</option>
+								{% endif %}
+							</select>
+							<span>Select "Test/Staging" to setup test transactions & "Production" once you are ready to go live</span>
+						</div>
+					</div>
 					<div class="form-group required">
 						<label class="control-label col-sm-3" for="payment_paytm_merchant_id">
 							<span data-toggle="tooltip" title="{{ entry_merchant_id_help }}">{{ entry_merchant_id }}</span>
@@ -51,20 +68,34 @@
 							{% endif %}
 							<span>Based on the selected Environment Mode, copy the Merchant Key for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
 						</div>
+						 
 					</div>
 					<div class="form-group required">
 						<label class="control-label col-sm-3" for="payment_paytm_website">
 							<span data-toggle="tooltip" title="{{ entry_website_help }}">{{ entry_website }}</span>
 						</label>
-						<div class="col-sm-9">
+					<!-- 	<div class="col-sm-9">
 							<input type="text" name="payment_paytm_website" id="payment_paytm_website" value="{{ payment_paytm_website }}" class="form-control"/>
 							{% if error_website %}
 							<div class="text-danger">{{ error_website }}</div>
 							{% endif %}
 							<span>Enter "WEBSTAGING" for test/integration environment & "DEFAULT" for production environment.</span>
+						</div> -->
+						<div class="col-sm-9">
+							<select name="payment_paytm_website" id="payment_paytm_website" class="form-control">
+								{% if payment_paytm_website == text_staging_website %}
+
+								<option value="{{ text_staging_website }}" selected="selected" >{{ text_staging_website }}</option>
+								<option value="{{ text_production_website}}" >{{ text_production_website}}</option>
+								{% else %}
+									<option value="{{ text_staging_website }}"> {{ text_staging_website }}</option>
+									<option value="{{ text_production_website }}" selected="selected">{{ text_production_website }}</option>
+								{% endif %}
+							</select> 
+							<span> Select "WEBSTAGING" for test/integration environment & "DEFAULT" for production environment.</span>
 						</div>
 					</div>
-					<div class="form-group required">
+					<!-- <div class="form-group required">
 						<label class="control-label col-sm-3" for="payment_paytm_industry_type">
 							<span data-toggle="tooltip" title="{{ entry_industry_type_help }}">{{ entry_industry_type }}</span>
 						</label>
@@ -75,24 +106,8 @@
 							{% endif %}
 							<span>Login to <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a> & copy paste the industry type available there.</span>
 						</div>
-					</div>
-					<div class="form-group">
-						<label class="control-label col-sm-3" for="payment_paytm_environment">
-							<span data-toggle="tooltip" title="{{ entry_environment_help }}">{{ entry_environment }}</span>
-						</label>
-						<div class="col-sm-9">
-							<select name="payment_paytm_environment" class="form-control">
-								{% if payment_paytm_environment == 1 %}
-								<option value="0">{{ text_staging }}</option>
-								<option value="1" selected="selected">{{ text_production}}</option>
-								{% else %}
-									<option value="0" selected="selected">{{ text_staging }}</option>
-									<option value="1">{{ text_production }}</option>
-								{% endif %}
-							</select>
-							<span>Select "Staging" for test/integration environment & "Production" once you move to production environment.</span>
-						</div>
-					</div>
+					</div> -->
+					
 					<div class="form-group">
 						<label class="control-label col-sm-3" for="payment_paytm_order_success_status_id">
 							<span data-toggle="tooltip" title="{{ entry_order_success_status_help }}">{{ entry_order_success_status }}</span>
@@ -198,7 +213,7 @@
 								<option value="0" selected="selected">{{ text_disabled }}</option>
 								{% endif %}
 							</select>
-							<span>Get your Bank Offer plans configured at Paytm & then Select "Yes" to provide Bank Offer to your customers.</span>
+							<span>Get your Bank Offer plans configured at <a href="https://business.paytm.com/contact-us#developer" target="_blank">Paytm</a> &amp; then Select "Yes" to provide Bank Offer to your customers.</span>
 						</div>
 					</div>	
 					<div class="form-group">
@@ -215,7 +230,7 @@
 								<option value="0" selected="selected">{{ text_disabled }}</option>
 								{% endif %}
 							</select>
-							<span>Get your EMI Subvention plans configured at Paytm & then Select "Yes" to offer EMI Subvention to your customers.</span>
+							<span>Get your EMI Subvention plans configured at <a href="https://business.paytm.com/contact-us#developer" target="_blank">Paytm</a> &amp; then Select "Yes" to offer EMI Subvention to your customers.</span>
 						</div>
 					</div>	
 					<div class="form-group">
@@ -251,7 +266,7 @@
 								<option value="0" selected="selected">{{ text_disabled }}</option>
 								{% endif %}
 							</select>
-							<span>Enable Paytm Invert logo if you are using dark theme. It will display on the checkout page.</span>
+							<span>Enable Paytm Invert logo for your website's dark theme. It is shown on the checkout page.</span>
 						</div>
 					</div>						
 				</form>
