@@ -34,7 +34,7 @@ class ModelExtensionPaymentPaytm extends Model {
 	/**
 	* save response in db
 	*/
-	public function saveTxnResponse($data  = array(),$order_id){
+	public function saveTxnResponse($order_id,$data  = array()){
 		if(empty($data['STATUS'])) return false;
 
 		$status 			= (!empty($data['STATUS']) && $data['STATUS'] =='TXN_SUCCESS') ? 1 : 0;

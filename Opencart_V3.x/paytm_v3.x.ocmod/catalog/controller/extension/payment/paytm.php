@@ -27,7 +27,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		}
 
 		$amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
-
+		$amount = number_format((float)$amount, 2, '.', '');
 		$paramData = array('amount' => $amount, 'order_id' => $order_id, 'cust_id' => $cust_id, 'email' => $email, 'mobile_no' => $mobile_no);
 
 		$data = $this->blinkCheckoutSend($paramData);

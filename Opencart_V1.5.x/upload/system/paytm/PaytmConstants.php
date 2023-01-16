@@ -19,11 +19,13 @@ class PaytmConstants{
 	CONST CONNECT_TIMEOUT						= 10;
 	CONST TIMEOUT								= 10;
 
-	CONST LAST_UPDATED							= "20191005";
-	CONST PLUGIN_VERSION						= "2.0";
+	CONST LAST_UPDATED							= "20230116";
+	CONST PLUGIN_VERSION						= "2.1";
 
 	CONST CUSTOM_CALLBACK_URL					= "";
 	CONST IS_BLINK_SUPPORTED					= true;
+	const COLORED_LOGO_URL 						= "https://staticpg.paytm.in/pg_plugins_logo/paytm_logo_paymodes.svg";
+	const WHITE_LOGO_URL						= "https://staticpg.paytm.in/pg_plugins_logo/paytm_logo_invert.svg";
 }
 
 ?>

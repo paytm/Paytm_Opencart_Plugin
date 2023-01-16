@@ -27,6 +27,7 @@ class ControllerPaymentPaytm extends Controller {
 		}
 	 
 		$amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
+		$amount = number_format((float)$amount, 2, '.', '');
 		$paramData = array('amount' => $amount, 'order_id' => $order_id, 'cust_id' => $cust_id, 'email' => $email, 'mobile_no' => $mobile_no);
 		$this->data = $this->blinkCheckoutSend($paramData);
 		$this->data['srcUrl'] = str_replace('MID',$this->config->get('paytm_merchant_id'), PaytmHelper::getPaytmURL(PaytmConstants::CHECKOUT_JS_URL, $this->config->get('paytm_environment')));
