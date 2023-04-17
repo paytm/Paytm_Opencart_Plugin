@@ -1,5 +1,6 @@
 <?php
 
+define('PLUGIN_OPENCART', "PLUGIN_OPENCART_" . VERSION);
 class PaytmConstants{
 	CONST PRODUCTION_HOST						= "https://securegw.paytm.in/";
 	CONST STAGING_HOST							= "https://securegw-stage.paytm.in/";
@@ -13,7 +14,7 @@ class PaytmConstants{
 	CONST CHANNEL_ID							= "WEB";
 	CONST APPEND_TIMESTAMP						= true;
 	CONST ONLY_SUPPORTED_INR					= true;
-	CONST X_REQUEST_ID							= "PLUGIN_OPENCART_" . VERSION;
+	CONST X_REQUEST_ID							= PLUGIN_OPENCART;
 
 	CONST MAX_RETRY_COUNT						= 3;
 	CONST CONNECT_TIMEOUT						= 10;
