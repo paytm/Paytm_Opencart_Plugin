@@ -90,7 +90,7 @@ class ControllerPaymentPaytm extends Controller {
 	* get Default callback url
 	*/
 	private function getCallbackUrl(){
-		if(!empty(PaytmConstants::CUSTOM_CALLBACK_URL)){
+		if(PaytmConstants::CUSTOM_CALLBACK_URL!=''){
 			return PaytmConstants::CUSTOM_CALLBACK_URL;
 		}else{
 			return $this->url->link('payment/paytm/callback');
