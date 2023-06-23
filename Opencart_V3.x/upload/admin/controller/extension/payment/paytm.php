@@ -27,7 +27,6 @@ class ControllerExtensionPaymentPaytm extends Controller {
 
 		// load all language variables
 		$data = $this->load->language('extension/payment/paytm');
-
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('setting/setting');		
@@ -41,10 +40,54 @@ class ControllerExtensionPaymentPaytm extends Controller {
 				$this->session->data['warning'] = $this->language->get('error_curl_warning');
 				$this->response->redirect($this->url->link('extension/payment/paytm', 'user_token=' . $this->session->data['user_token'], true));
 			}
+			
+			//webhook
+			if (isset($this->request->post['payment_paytm_is_webhook_triggered'])) {
+				if($this->request->post['payment_paytm_is_webhook_triggered']==1){
+					if($this->request->post['payment_paytm_webhook']==1){
+						$webhookUrl = $this->language->get('base_url_for_paytm_webhook');
+					}else{
+						$webhookUrl = "https://www.dummyUrl123456.com";
+					}
+					if($this->request->post['payment_paytm_environment']==1){
+						$url = $this->language->get('WEBHOOK_PRODUCTION_URL');
+						
+					}else{
+						$url = $this->language->get('WEBHOOK_STAGING_URL');
+					}
+	                $paytmParams = array(
+	                            "mid"       => $this->request->post['payment_paytm_merchant_id'],
+	                            "queryParam" => "notificationUrls",
+	                            "paymentNotificationUrl" => $webhookUrl
+	                          );
+	                $paytmParamsJson = json_encode($paytmParams, JSON_UNESCAPED_SLASHES);
+	                $generateSignature = PaytmChecksum::generateSignature($paytmParamsJson, $this->config->get('payment_paytm_merchant_key'));
+
+	                $curl = curl_init();
+
+	                curl_setopt_array($curl, array(
+	                CURLOPT_URL => $url.'api/v1/external/putMerchantInfo', 
+	                CURLOPT_RETURNTRANSFER => true,
+	                CURLOPT_ENCODING => '',
+	                CURLOPT_MAXREDIRS => 10,
+	                CURLOPT_TIMEOUT => 0,
+	                CURLOPT_FOLLOWLOCATION => true,
+	                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	                CURLOPT_CUSTOMREQUEST => 'PUT',
+	                CURLOPT_POSTFIELDS =>$paytmParamsJson,
+	                CURLOPT_HTTPHEADER => array(
+	                        'Content-Type: application/json',
+	                        'x-checksum: '.$generateSignature.''
+	                    ),
+	                ));
+
+	                $response = curl_exec($curl);
+	                $res = json_decode($response);    
+				}
+			}	
 
 			$this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
 		}
-
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
 		} else {
@@ -225,7 +268,12 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$data['payment_paytm_logo'] = $this->request->post['payment_paytm_logo'];
 		} else {
 			$data['payment_paytm_logo'] = (int)$this->config->get('payment_paytm_logo');
-		}		
+		}	
+		if (isset($this->request->post['payment_paytm_webhook'])) {
+			$data['payment_paytm_webhook'] = $this->request->post['payment_paytm_webhook'];
+		} else {
+			$data['payment_paytm_webhook'] = (int)$this->config->get('payment_paytm_webhook');
+		}			
 
 		// Check cUrl is enabled or not
 		$data['curl_version'] = PaytmHelper::getcURLversion();
@@ -336,7 +384,6 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		if(PaytmHelper::getcURLversion() == false){
 			$this->error['warning'] = $this->language->get('text_curl_disabled');
 		}
-
 		if (!$this->error) {
 			return true;
 		} else {

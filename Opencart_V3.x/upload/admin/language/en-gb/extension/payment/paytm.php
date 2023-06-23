@@ -76,3 +76,16 @@ $_['error_website'] 						= 'Website Required!';
 $_['error_industry_type'] 					= 'Industry Type Required!';
 $_['error_environment'] 					= 'Environment Required!';
 $_['error_curl_warning'] 					= 'Your server is not getting to connect with us. Please contact to Paytm Support.';
+
+
+$_['entry_webhook']							= 'Enable Webhook';
+$_['entry_webhook_help']					= 'Enable Paytm Webhook';
+
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+$host = $_SERVER['HTTP_HOST'];
+$currentURL = $protocol . $host . $_SERVER['REQUEST_URI'];
+$finalURL = strstr($currentURL, '&', true); 
+$webhookURL = str_replace('admin/', '', $finalURL);
+$_['base_url_for_paytm_webhook']			= $webhookURL.'/webhook';
+$_['WEBHOOK_STAGING_URL']					=  "https://boss-stage-ext.paytm.com/";
+$_['WEBHOOK_PRODUCTION_URL']				= "https://boss-ext.paytm.in/";

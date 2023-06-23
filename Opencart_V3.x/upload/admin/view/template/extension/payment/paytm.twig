@@ -27,6 +27,8 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-paytm" class="form-horizontal">
+				<input type="hidden" name="payment_paytm_is_webhook_triggered" id="payment_paytm_is_webhook_triggered" value="0"/>
+				<input type="hidden" name="payment_paytm_db_webhook_value" id="payment_paytm_db_webhook_value" value="{{payment_paytm_webhook}}"/>
 					<div class="form-group">
 						<label class="control-label col-sm-3" for="payment_paytm_environment">
 							<span data-toggle="tooltip" title="{{ entry_environment_help }}">{{ entry_environment }}</span>
@@ -268,7 +270,26 @@
 							</select>
 							<span>Enable Paytm Invert logo for your website's dark theme. It is shown on the checkout page.</span>
 						</div>
-					</div>						
+					</div>	
+
+					<!-- Enable Paytm Webhook -->
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_webhook">
+							<span data-toggle="tooltip" title="{{ entry_webhook_help }}">{{ entry_webhook }}</span>
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_webhook" class="form-control">
+								{% if payment_paytm_webhook %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0">{{ text_disabled }}</option>
+								{% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+							<span>Enable Paytm Webhook <a href="https://dashboard.paytm.com/next/webhook-url">here</a> with the URL listed below.<br> {{base_url_for_paytm_webhook}}</span>
+						</div>
+					</div>											
 				</form>
 			</div>
 			<div class="panel-footer">
@@ -288,3 +309,17 @@
 	</div>
 </div>
 {{ footer }}
+
+<script>
+$(function() {
+    $('select[name=payment_paytm_webhook]').change(function() {
+	    var get_current_webhook_value = $('option:selected', this).val();
+	    var get_db_webhook_value = $("#payment_paytm_db_webhook_value").val();
+	    if(get_current_webhook_value != get_db_webhook_value){
+	        $('input[name=payment_paytm_is_webhook_triggered]').val(1);
+	    }else{
+	    	$('input[name=payment_paytm_is_webhook_triggered]').val(0);
+	    }
+    });
+});
+</script>

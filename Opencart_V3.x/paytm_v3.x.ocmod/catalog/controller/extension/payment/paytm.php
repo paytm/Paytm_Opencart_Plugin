@@ -135,8 +135,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$data['text_response'] 	= sprintf($this->language->get('text_response'), $this->request->post['RESPMSG']);
 		} else {
 			$data['text_response'] 	= sprintf($this->language->get('text_response'), '');
-		}
-
+		}			
 		if(!empty($this->request->post)){
 			
 			if(!empty($this->request->post['CHECKSUMHASH'])){
@@ -243,7 +242,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			}
 		}else{
 			$this->preRedirect($data);
-		}
+		}		
 	}
 
 	private function addOrderHistory($order_id, $order_status_id, $comment = ''){
@@ -251,6 +250,32 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$this->model_checkout_order->addOrderHistory($order_id, $order_status_id, $comment);
 		} catch(\Exception $e){
 		}
+	}
+
+	public function webhook(){
+			if(!empty($this->request->post['CHECKSUMHASH'])){
+				$post_checksum = $this->request->post['CHECKSUMHASH'];
+				unset($this->request->post['CHECKSUMHASH']);	
+			}else{
+				$post_checksum = "";
+			}		
+		$isValidChecksum = PaytmChecksum::verifySignature($this->request->post, $this->config->get("payment_paytm_merchant_key"), $post_checksum);
+		if($isValidChecksum === true){		
+		$order_id = !empty($this->request->post['ORDERID']) ? PaytmHelper::getOrderId($this->request->post['ORDERID']) : 0;
+		$this->load->model('checkout/order');
+		$order_info = $this->model_checkout_order->getOrder($order_id);
+			if($this->request->post['STATUS']=='TXN_SUCCESS'){
+				$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_success_status_id'));
+			}
+			else{
+				$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_failed_status_id'));
+			}
+			echo 'webhook received';
+		} else {
+			echo 'Something went wrong';
+		}
+		
+			
 	}
 
 	/**
