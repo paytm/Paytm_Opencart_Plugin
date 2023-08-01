@@ -32,9 +32,6 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		$this->load->model('setting/setting');		
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			$this->request->post = array_map('trim', $this->request->post);
-			$this->model_setting_setting->editSetting('payment_paytm', $this->request->post);
-
 			$this->session->data['success'] = $this->language->get('text_success');
 			if(!PaytmHelper::validateCurl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->request->post['payment_paytm_environment']))){
 				$this->session->data['warning'] = $this->language->get('error_curl_warning');
@@ -82,9 +79,25 @@ class ControllerExtensionPaymentPaytm extends Controller {
 	                ));
 
 	                $response = curl_exec($curl);
-	                $res = json_decode($response);    
+	                $res = (array)json_decode($response); 
+	                if (!empty($res ) && isset($res['success'])) {
+					      $this->session->data['warning'] ='';
+				    } elseif (isset($res['E_400'])) {
+			              $this->session->data['warning'] ='';
+				    }else if(isset($res['BO_411'])){
+				    	  $this->session->data['warning'] = "Something went wrong while configuring webhook. Please login to Paytm Dashboard to configure.";
+			    	}else {
+					      $this->session->data['warning'] = "Something went wrong while configuring webhook. Please login to Paytm Dashboard to configure.";
+				    }     
 				}
-			}	
+			}
+
+			if($this->session->data['warning'] !=''){
+				$this->response->redirect($this->url->link('extension/payment/paytm', 'user_token=' . $this->session->data['user_token'], true));
+			}
+
+			$this->request->post = array_map('trim', $this->request->post);
+			$this->model_setting_setting->editSetting('payment_paytm', $this->request->post);	
 
 			$this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
 		}

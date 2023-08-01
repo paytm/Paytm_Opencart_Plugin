@@ -33,16 +33,73 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		$this->load->model('setting/setting');
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			$this->request->post = array_map('trim', $this->request->post);
-			$this->model_setting_setting->editSetting('paytm', $this->request->post);
-
-			$this->session->data['success'] = $this->language->get('text_success');
 
 			if(!PaytmHelper::validateCurl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->request->post['paytm_environment']))){
 				$this->session->data['warning'] = $this->language->get('error_curl_warning');
 				$this->response->redirect($this->url->link('extension/payment/paytm', 'token=' . $this->session->data['token'], true));
 			}
 
+			//webhook
+			if (isset($this->request->post['paytm_is_webhook_triggered'])) {
+				if($this->request->post['paytm_is_webhook_triggered']==1){
+					if($this->request->post['paytm_webhook']==1){
+						$webhookUrl = $this->language->get('base_url_for_paytm_webhook');
+					}else{
+						$webhookUrl = "https://www.dummyUrl.com";
+					}
+					if($this->request->post['paytm_environment']==1){
+						$url = $this->language->get('WEBHOOK_PRODUCTION_URL');
+						
+					}else{
+						$url = $this->language->get('WEBHOOK_STAGING_URL');
+					}
+	                $paytmParams = array(
+	                            "mid"       => $this->request->post['paytm_merchant_id'],
+	                            "queryParam" => "notificationUrls",
+	                            "paymentNotificationUrl" => $webhookUrl
+	                          );
+	                $paytmParamsJson = json_encode($paytmParams, JSON_UNESCAPED_SLASHES);
+	                $generateSignature = PaytmChecksum::generateSignature($paytmParamsJson, $this->config->get('paytm_merchant_key'));
+
+	                $curl = curl_init();
+
+	                curl_setopt_array($curl, array(
+	                CURLOPT_URL => $url.'api/v1/external/putMerchantInfo', 
+	                CURLOPT_RETURNTRANSFER => true,
+	                CURLOPT_ENCODING => '',
+	                CURLOPT_MAXREDIRS => 10,
+	                CURLOPT_TIMEOUT => 0,
+	                CURLOPT_FOLLOWLOCATION => true,
+	                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	                CURLOPT_CUSTOMREQUEST => 'PUT',
+	                CURLOPT_POSTFIELDS =>$paytmParamsJson,
+	                CURLOPT_HTTPHEADER => array(
+	                        'Content-Type: application/json',
+	                        'x-checksum: '.$generateSignature.''
+	                    ),
+	                ));
+
+	                $response = curl_exec($curl);               
+                 	$res = (array)json_decode($response); 
+	                if (!empty($res ) && isset($res['success'])) {
+					      $this->session->data['warning'] ='';
+				    } elseif (isset($res['E_400'])) {
+			              $this->session->data['warning'] ='';
+				    }else if(isset($res['BO_411'])){
+				    	  $this->session->data['warning'] = "Something went wrong while configuring webhook. Please login to Paytm Dashboard to configure.";
+			    	}else {
+					      $this->session->data['warning'] = "Something went wrong while configuring webhook. Please login to Paytm Dashboard to configure.";
+				    }   
+				}
+			}
+
+			if($this->session->data['warning'] !=''){
+				$this->response->redirect($this->url->link('extension/payment/paytm', 'token=' . $this->session->data['token'], true));
+			}
+
+			$this->request->post = array_map('trim', $this->request->post);
+			$this->model_setting_setting->editSetting('paytm', $this->request->post);
+			$this->session->data['success'] = $this->language->get('text_success');
 			$this->response->redirect($this->url->link('extension/extension', 'token=' . $this->session->data['token'] . '&type=payment', true));
 		}
 		
@@ -195,6 +252,14 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$data['paytm_sort_order'] = $this->config->get('paytm_sort_order');
 		}
 
+		
+		//webhook
+		if (isset($this->request->post['paytm_webhook'])) {
+			$data['paytm_webhook'] = $this->request->post['paytm_webhook'];
+		} else {
+			$data['paytm_webhook'] = (int)$this->config->get('paytm_webhook');
+		}	
+
 		// Check cUrl is enabled or not
 		$data['curl_version'] = PaytmHelper::getcURLversion();
 
@@ -294,9 +359,9 @@ class ControllerExtensionPaymentPaytm extends Controller {
 			$this->error['website'] = $this->language->get('error_website');
 		}
 
-		if (!$this->request->post['paytm_industry_type']) {
+		/*if (!$this->request->post['paytm_industry_type']) {
 			$this->error['industry_type'] = $this->language->get('error_industry_type');
-		}
+		}*/
 
 		if (!in_array($this->request->post['paytm_environment'], array("1","0"))) {
 			$this->error['environment'] = $this->language->get('error_environment');

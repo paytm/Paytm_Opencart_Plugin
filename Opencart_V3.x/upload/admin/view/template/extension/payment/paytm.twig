@@ -179,22 +179,7 @@
 							</select>
 						</div>
 						</div>
-					<div class="form-group">
-						<label class="control-label col-sm-3" for="payment_paytm_status">
-							<span data-toggle="tooltip" title="{{ entry_status_help }}">{{ entry_status }}</span>
-						</label>
-						<div class="col-sm-9">
-							<select name="payment_paytm_status" class="form-control">
-								{% if payment_paytm_status %}
-								<option value="1" selected="selected">{{ text_enabled }}</option>
-								<option value="0">{{ text_disabled }}</option>
-								{% else %}
-								<option value="1">{{ text_enabled }}</option>
-								<option value="0" selected="selected">{{ text_disabled }}</option>
-								{% endif %}
-							</select>
-						</div>
-					</div>
+					
 					<div class="form-group">
 						<label class="col-sm-3 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
 						<div class="col-sm-9">
@@ -289,6 +274,23 @@
 							</select>
 							<span>Enable Paytm Webhook <a href="https://dashboard.paytm.com/next/webhook-url">here</a> with the URL listed below.<br> {{base_url_for_paytm_webhook}}</span>
 						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_status">
+							<span data-toggle="tooltip" title="{{ entry_status_help }}">{{ entry_status }}</span>
+						</label>
+						<div class="col-sm-9">
+							<select name="payment_paytm_status" class="form-control" id="payment_paytm_status">
+								{% if payment_paytm_status %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0">{{ text_disabled }}</option>
+								{% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+						</div>
 					</div>											
 				</form>
 			</div>
@@ -314,12 +316,25 @@
 $(function() {
     $('select[name=payment_paytm_webhook]').change(function() {
 	    var get_current_webhook_value = $('option:selected', this).val();
+	    console.log('get_current_webhook_value '+ get_current_webhook_value);
 	    var get_db_webhook_value = $("#payment_paytm_db_webhook_value").val();
+	    console.log('get_db_webhook_value '+get_db_webhook_value);
 	    if(get_current_webhook_value != get_db_webhook_value){
 	        $('input[name=payment_paytm_is_webhook_triggered]').val(1);
 	    }else{
 	    	$('input[name=payment_paytm_is_webhook_triggered]').val(0);
 	    }
     });
-});
+
+     $('select[name=payment_paytm_status]').change(function() {
+	    var get_current_status_value = $('option:selected', this).val();
+	    var get_db_webhook_value = $("#payment_paytm_db_webhook_value").val();
+	    if(get_current_status_value == 0){
+	         if(!confirm("Are you sure you want to disable Paytm Payment Gateway, you will no longer be able to accept payments through us?")){
+            		$('#payment_paytm_status').val(1);
+        		}
+	    }
+    });
+    });
+
 </script>

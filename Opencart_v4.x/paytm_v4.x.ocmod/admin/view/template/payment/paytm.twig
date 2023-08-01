@@ -1,0 +1,222 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-end">
+        <button type="submit" form="form-payment" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-save"></i></button>
+        <a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  <div class="container-fluid">
+    
+    <div class="card">
+      <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_edit }}</div>
+      <div class="card-body">
+        <form id="form-payment" action="{{ save }}" method="post" data-oc-toggle="ajax">
+        <input type="hidden" name="payment_paytm_is_webhook_triggered" id="payment_paytm_is_webhook_triggered" value="0"/>
+        <input type="hidden" name="payment_paytm_db_webhook_value" id="payment_paytm_db_webhook_value" value="{{payment_paytm_webhook}}"/>        
+          <ul class="nav nav-tabs">
+            <li class="nav-item"><a href="#tab-general" data-bs-toggle="tab" class="nav-link active">{{ tab_general }}</a></li>
+            <li class="nav-item"><a href="#tab-report" data-bs-toggle="tab" class="nav-link">{{ tab_report }}</a></li>
+          </ul>
+          <div class="tab-content">
+            <div id="tab-general" class="tab-pane active">
+
+              <fieldset>
+                <legend>{{ text_general }}</legend>
+                <div class="row mb-3">
+                  <label for="input-response" class="col-sm-2 col-form-label">{{ entry_environment }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_environment" id="input-response" class="form-select">
+                      <option value="0"{% if not payment_paytm_environment %} selected{% endif %}>{{ text_staging }}</option>
+                      <option value="1"{% if payment_paytm_environment %} selected{% endif %}>{{ text_production }}</option>
+                    </select>
+                    <span>Select "Test/Staging" to setup test transactions & "Production" once you are ready to go live</span>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="input-order-status" class="col-sm-2 col-form-label">{{ entry_mid }}</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="payment_paytm_mid" value="{{ payment_paytm_mid }}" placeholder="{{ entry_mid }}" id="input-order-status" class="form-control"/>
+                    <span>Based on the selected Environment Mode, copy the relevant Merchant ID for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
+                  </div>
+                </div>  
+                <div class="row mb-3">
+                  <label for="input-order-status" class="col-sm-2 col-form-label">{{ entry_mkey }}</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="payment_paytm_mkey" value="{{ payment_paytm_mkey }}" placeholder="{{ entry_mkey }}" id="input-order-status" class="form-control"/>
+                    <span>Based on the selected Environment Mode, copy the Merchant Key for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
+                  </div>
+                </div>                                  
+                <div class="row mb-3">
+                  <label for="input-response" class="col-sm-2 col-form-label">{{ entry_website }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_website" id="input-response" class="form-select">
+                      <option value="{{ text_webstaging }}"{% if not payment_paytm_website %} selected{% endif %}>{{ text_webstaging }}</option>
+                      <option value="{{ text_default }}"{% if payment_paytm_website %} selected{% endif %}>{{ text_default }}</option>
+                    </select>
+                    <span> Select "WEBSTAGING" for test/integration environment & "DEFAULT" for production environment.</span>
+                  </div>
+                </div>                                
+                <div class="row mb-3">
+                  <label for="input-approved-status" class="col-sm-2 col-form-label">{{ entry_approved_status }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_approved_status_id" id="input-approved-status" class="form-select">
+                      {% for order_status in order_statuses %}
+                        <option value="{{ order_status.order_status_id }}"{% if order_status.order_status_id == payment_paytm_approved_status_id %} selected{% endif %}>{{ order_status.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="input-failed-status" class="col-sm-2 col-form-label">{{ entry_failed_status }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_failed_status_id" id="input-failed-status" class="form-select">
+                      {% for order_status in order_statuses %}
+                        <option value="{{ order_status.order_status_id }}"{% if order_status.order_status_id == payment_paytm_failed_status_id %} selected{% endif %}>{{ order_status.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="input-order-status" class="col-sm-2 col-form-label">{{ entry_order_status }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_order_status_id" id="input-order-status" class="form-select">
+                      {% for order_status in order_statuses %}
+                        <option value="{{ order_status.order_status_id }}"{% if order_status.order_status_id == payment_paytm_order_status_id %} selected{% endif %}>{{ order_status.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="input-order-status" class="col-sm-2 col-form-label">{{ entry_order_total }}</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="payment_paytm_total" value="{{ payment_paytm_total }}" placeholder="{{ entry_order_total }}" id="input-order-status" class="form-control"/>
+                  </div>
+                </div>                
+                <div class="row mb-3">
+                  <label for="input-geo-zone" class="col-sm-2 col-form-label">{{ entry_geo_zone }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_geo_zone_id" id="input-geo-zone" class="form-select">
+                      <option value="0">{{ text_all_zones }}</option>
+                      {% for geo_zone in geo_zones %}
+                        <option value="{{ geo_zone.geo_zone_id }}"{% if geo_zone.geo_zone_id == payment_paytm_geo_zone_id %} selected{% endif %}>{{ geo_zone.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+               
+                <div class="row mb-3">
+                  <label for="input-sort-order" class="col-sm-2 col-form-label">{{ entry_sort_order }}</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="payment_paytm_sort_order" value="{{ payment_paytm_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control"/>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="input-response" class="col-sm-2 col-form-label">{{ entry_bank_offer }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_bank_offer" id="input-response" class="form-select">
+                      <option value="0"{% if not payment_paytm_bank_offer %} selected{% endif %}>{{ text_disable }}</option>
+                      <option value="1"{% if payment_paytm_bank_offer %} selected{% endif %}>{{ text_enable }}</option>
+                    </select>
+                     <span>Get your Bank Offer plans configured at <a href="https://business.paytm.com/contact-us#developer" target="_blank">Paytm</a> &amp; then Select "Yes" to provide Bank Offer to your customers.</span>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="input-response" class="col-sm-2 col-form-label">{{ entry_emi_subvention }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_emi_subvention" id="input-response" class="form-select">
+                      <option value="0"{% if not payment_paytm_emi_subvention %} selected{% endif %}>{{ text_disable }}</option>
+                      <option value="1"{% if payment_paytm_emi_subvention %} selected{% endif %}>{{ text_enable }}</option>
+                    </select>
+                    <span>Get your EMI Subvention plans configured at <a href="https://business.paytm.com/contact-us#developer" target="_blank">Paytm</a> &amp; then Select "Yes" to offer EMI Subvention to your customers.</span>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="input-response" class="col-sm-2 col-form-label">{{ entry_dc_emi }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_dc_emi" id="input-response" class="form-select">
+                      <option value="0"{% if not payment_paytm_dc_emi %} selected{% endif %}>{{ text_disable }}</option>
+                      <option value="1"{% if payment_paytm_dc_emi %} selected{% endif %}>{{ text_enable }}</option>
+                    </select>
+                    <span>Get DC EMI enabled for your MID and then select "Yes" to offer DC EMI to your customer. Customer mobile number is mandatory for DC EMI.</span>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="input-response" class="col-sm-2 col-form-label">{{ entry_envert_logo }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_envert_logo" id="input-response" class="form-select">
+                      <option value="0"{% if not payment_paytm_envert_logo %} selected{% endif %}>{{ text_disable }}</option>
+                      <option value="1"{% if payment_paytm_envert_logo %} selected{% endif %}>{{ text_enable }}</option>
+                    </select>
+                    <span>Enable Paytm Invert logo for your website's dark theme. It is shown on the checkout page.</span>
+                  </div>
+                </div>  
+                <div class="row mb-3">
+                  <label for="input-response" class="col-sm-2 col-form-label">{{ entry_response }}</label>
+                  <div class="col-sm-10">
+                    <select name="payment_paytm_webhook" id="input-response" class="form-select">
+                      <option value="0"{% if not payment_paytm_webhook %} selected{% endif %}>{{ text_disable }}</option>
+                      <option value="1"{% if payment_paytm_webhook %} selected{% endif %}>{{ text_enable }}</option>
+                    </select>
+                    <span>Enable Paytm Webhook <a href="https://dashboard.paytm.com/next/webhook-url">here</a> with the URL listed below.<br></span>
+
+                    <label>{{base_url_for_paytm_webhook}}</label>
+                  </div>
+                </div> 
+                 <div class="row mb-3">
+                  <label for="input-status" class="col-sm-2 col-form-label">{{ entry_status }}</label>
+                  <div class="col-sm-10">
+                    <div class="form-check form-switch form-switch-lg" id="toggle-btn">
+                      <input type="hidden" name="payment_paytm_status" value="0"/> <input type="checkbox" name="payment_paytm_status" value="1" id="input-status" class="form-check-input"{% if payment_paytm_status %} checked{% endif %}/>
+                    </div>
+                  </div>
+                </div>                                                                             
+              </fieldset>            
+            </div>
+            <div id="tab-report" class="tab-pane">
+              <fieldset>
+                <legend>{{ text_report }}</legend>
+                <div id="report">{{ report }}</div>
+              </fieldset>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}
+
+<script>
+$(function() {
+    $('select[name=payment_paytm_webhook]').change(function() {
+      var get_current_webhook_value = $('option:selected', this).val();
+      var get_db_webhook_value = $("#payment_paytm_db_webhook_value").val();
+      if(get_current_webhook_value != get_db_webhook_value){
+          $('input[name=payment_paytm_is_webhook_triggered]').val(1);
+      }else{
+        $('input[name=payment_paytm_is_webhook_triggered]').val(0);
+      }
+    });
+
+    $('#input-status').change(function() {
+      if(!$(this).is(':checked')) {
+        if(!confirm("Are you sure you want to disable Paytm Payment Gateway, you will no longer be able to accept payments through us?")){
+            $('#input-status').prop('checked',true);
+        }
+        
+      
+    } 
+    
+  });
+
+
+});
+</script>

@@ -27,50 +27,10 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-paytm" class="form-horizontal">
-					<div class="form-group required">
-						<label class="control-label col-sm-3" for="paytm_merchant_id">
-							<span data-toggle="tooltip" title="<?php echo $entry_merchant_id_help; ?>"><?php echo $entry_merchant_id; ?></span>
-						</label>
-						<div class="col-sm-9">
-							<input type="text" name="paytm_merchant_id" id="paytm_merchant_id" value="<?php echo $paytm_merchant_id; ?>" class="form-control"/>
-							<?php if ($error_merchant_id) { ?>
-							<div class="text-danger"><?php echo $error_merchant_id; ?></div>
-							<?php } ?>
-						</div>
-					</div>
-					<div class="form-group required">
-						<label class="control-label col-sm-3" for="paytm_merchant_key">
-							<span data-toggle="tooltip" title="<?php echo $entry_merchant_key_help; ?>"><?php echo $entry_merchant_key; ?></span>
-						</label>
-						<div class="col-sm-9">
-							<input type="text" name="paytm_merchant_key" id="paytm_merchant_key" value="<?php echo $paytm_merchant_key; ?>" class="form-control"/>
-							<?php if ($error_merchant_key) { ?>
-							<div class="text-danger"><?php echo $error_merchant_key; ?></div>
-							<?php } ?>
-						</div>
-					</div>
-					<div class="form-group required">
-						<label class="control-label col-sm-3" for="paytm_website">
-							<span data-toggle="tooltip" title="<?php echo $entry_website_help; ?>"><?php echo $entry_website; ?></span>
-						</label>
-						<div class="col-sm-9">
-							<input type="text" name="paytm_website" id="paytm_website" value="<?php echo $paytm_website; ?>" class="form-control"/>
-							<?php if ($error_website) { ?>
-							<div class="text-danger"><?php echo $error_website; ?></div>
-							<?php } ?></div>
-					</div>
-					<div class="form-group required">
-						<label class="control-label col-sm-3" for="paytm_industry_type">
-							<span data-toggle="tooltip" title="<?php echo $entry_industry_type_help; ?>"><?php echo $entry_industry_type; ?></span>
-						</label>
-						<div class="col-sm-9">
-							<input type="text" name="paytm_industry_type" id="paytm_industry_type" value="<?php echo $paytm_industry_type; ?>" class="form-control"/>
-							<?php if ($error_industry_type) { ?>
-							<div class="text-danger"><?php echo $error_industry_type; ?></div>
-							<?php } ?>
-						</div>
-					</div>
-					<div class="form-group">
+					<input type="hidden" name="paytm_is_webhook_triggered" id="paytm_is_webhook_triggered" value="0"/>
+				<input type="hidden" name="paytm_db_webhook_value" id="paytm_db_webhook_value" value="<?php echo $paytm_webhook?>"/>
+
+				<div class="form-group">
 						<label class="control-label col-sm-3" for="paytm_environment">
 							<span data-toggle="tooltip" title="<?php echo $entry_environment_help; ?>"><?php echo $entry_environment; ?></span>
 						</label>
@@ -84,8 +44,72 @@
 								<option value="1"><?php echo $text_production; ?></option>
 								<?php } ?>
 							</select>
+							<span>Select "Test/Staging" to setup test transactions & "Production" once you are ready to go live</span>
 						</div>
 					</div>
+					
+					<div class="form-group required">
+						<label class="control-label col-sm-3" for="paytm_merchant_id">
+							<span data-toggle="tooltip" title="<?php echo $entry_merchant_id_help; ?>"><?php echo $entry_merchant_id; ?></span>
+						</label>
+						<div class="col-sm-9">
+							<input type="text" name="paytm_merchant_id" id="paytm_merchant_id" value="<?php echo $paytm_merchant_id; ?>" class="form-control"/>
+							<?php if ($error_merchant_id) { ?>
+							<div class="text-danger"><?php echo $error_merchant_id; ?></div>
+							<?php } ?>
+							<span>Based on the selected Environment Mode, copy the relevant Merchant ID for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
+						</div>
+					</div>
+					<div class="form-group required">
+						<label class="control-label col-sm-3" for="paytm_merchant_key">
+							<span data-toggle="tooltip" title="<?php echo $entry_merchant_key_help; ?>"><?php echo $entry_merchant_key; ?></span>
+						</label>
+						<div class="col-sm-9">
+							<input type="text" name="paytm_merchant_key" id="paytm_merchant_key" value="<?php echo $paytm_merchant_key; ?>" class="form-control"/>
+							<?php if ($error_merchant_key) { ?>
+							<div class="text-danger"><?php echo $error_merchant_key; ?></div>
+							<?php } ?>
+							<span>Based on the selected Environment Mode, copy the Merchant Key for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
+						</div>
+					</div>
+					<div class="form-group required">
+						<label class="control-label col-sm-3" for="paytm_website">
+							<span data-toggle="tooltip" title="<?php echo $entry_website_help; ?>"><?php echo $entry_website; ?></span>
+						</label>
+						<!-- <div class="col-sm-9">
+							<input type="text" name="paytm_website" id="paytm_website" value="<?php echo $paytm_website; ?>" class="form-control"/>
+							<?php if ($error_website) { ?>
+							<div class="text-danger"><?php echo $error_website; ?></div>
+							<?php } ?>
+						</div> -->
+						<div class="col-sm-9">
+						<select name="paytm_website" id="paytm_website" class="form-control">
+								<?php if ($paytm_website == $text_staging_website){?>
+
+								<option value="<?php echo $text_staging_website ?>" selected="selected" ><?php echo $text_staging_website ?></option>
+								<option value="<?php echo $text_production_website ?>" ><?php echo $text_production_website?></option>
+								<?php } else { ?>
+									<option value="<?php echo $text_staging_website ?>"> <?php echo $text_staging_website ?></option>
+									<option value="<?php echo $text_production_website ?>" selected="selected"><?php echo $text_production_website ?></option>
+								<?php }?>
+							</select> 
+							<span> Select "WEBSTAGING" for test/integration environment & "DEFAULT" for production environment.</span>
+						</div>
+
+					</div>
+
+					<!-- <div class="form-group required">
+						<label class="control-label col-sm-3" for="paytm_industry_type">
+							<span data-toggle="tooltip" title="<?php echo $entry_industry_type_help; ?>"><?php echo $entry_industry_type; ?></span>
+						</label>
+						<div class="col-sm-9">
+							<input type="text" name="paytm_industry_type" id="paytm_industry_type" value="<?php echo $paytm_industry_type; ?>" class="form-control"/>
+							<?php if ($error_industry_type) { ?>
+							<div class="text-danger"><?php echo $error_industry_type; ?></div>
+							<?php } ?>
+						</div>
+					</div>  -->
+					
 					<div class="form-group">
 						<label class="control-label col-sm-3" for="paytm_order_success_status_id">
 							<span data-toggle="tooltip" title="<?php echo $entry_order_success_status_help; ?>"><?php echo $entry_order_success_status; ?></span>
@@ -157,12 +181,38 @@
 							</select>
 						</div>
 						</div>
+					
 					<div class="form-group">
-						<label class="control-label col-sm-3" for="paytm_status">
+						<label class="col-sm-3 control-label" for="input-sort-order"><?php echo $entry_sort_order; ?></label>
+						<div class="col-sm-9">
+							<input type="text" name="paytm_sort_order" value="<?php echo $paytm_sort_order; ?>" placeholder="<?php echo $entry_sort_order; ?>" id="input-sort-order" class="form-control" />
+						</div>
+					</div>
+
+					<!-- Enable Paytm Webhook -->
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payment_paytm_webhook">
+							<span data-toggle="tooltip" title="<?php echo $entry_webhook ?>"><?php echo $entry_webhook ?></span>
+						</label>
+						<div class="col-sm-9">
+							<select name="paytm_webhook" class="form-control">
+								<?php if ($paytm_webhook) {?>
+								<option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+								<option value="0"><?php echo $text_disabled; ?></option>
+								<?php } else { ?>
+								<option value="1"><?php echo $text_enabled; ?></option>
+								<option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+								<?php } ?>
+							</select>
+							<span>Enable Paytm Webhook <a href="https://dashboard.paytm.com/next/webhook-url">here</a> with the URL listed below.<br> <?php echo $base_url_for_paytm_webhook?></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="paytm_status" >
 							<span data-toggle="tooltip" title="<?php echo $entry_status_help; ?>"><?php echo $entry_status; ?></span>
 						</label>
 						<div class="col-sm-9">
-							<select name="paytm_status" class="form-control">
+							<select name="paytm_status" class="form-control" id="paytm_status">
 								<?php if ($paytm_status) { ?>
 								<option value="1" selected="selected"><?php echo $text_enabled; ?></option>
 								<option value="0"><?php echo $text_disabled; ?></option>
@@ -172,13 +222,8 @@
 								<?php } ?>
 							</select>
 						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label" for="input-sort-order"><?php echo $entry_sort_order; ?></label>
-						<div class="col-sm-9">
-							<input type="text" name="paytm_sort_order" value="<?php echo $paytm_sort_order; ?>" placeholder="<?php echo $entry_sort_order; ?>" id="input-sort-order" class="form-control" />
-						</div>
-					</div>
+					</div>	
+
 				</form>
 			</div>
 
@@ -199,3 +244,25 @@
 	</div>
 </div>
 <?php echo $footer; ?>
+<script>
+$(function() {
+    $('select[name=paytm_webhook]').change(function() {
+	    var get_current_webhook_value = $('option:selected', this).val();
+	    var get_db_webhook_value = $("#paytm_db_webhook_value").val();
+	    if(get_current_webhook_value != get_db_webhook_value){
+	        $('input[name=paytm_is_webhook_triggered]').val(1);
+	    }else{
+	    	$('input[name=paytm_is_webhook_triggered]').val(0);
+	    }
+    });
+
+       $('select[name=paytm_status]').change(function() {
+	    var get_current_status_value = $('option:selected', this).val();
+	    if(get_current_status_value == 0){
+	         if(!confirm("Are you sure you want to disable Paytm Payment Gateway, you will no longer be able to accept payments through us?")){
+            		$('#paytm_status').val(1);
+        		}
+	    }
+    });
+});
+</script>

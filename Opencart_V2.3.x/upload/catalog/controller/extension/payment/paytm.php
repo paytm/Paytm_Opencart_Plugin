@@ -91,7 +91,34 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		}	
 	}
 
+	//webhook
+	public function webhook(){
+		if(!empty($this->request->post['CHECKSUMHASH'])){
+			$post_checksum = $this->request->post['CHECKSUMHASH'];
+			unset($this->request->post['CHECKSUMHASH']);	
+		}else{
+			$post_checksum = "";
+		}
+		
+		$isValidChecksum = PaytmChecksum::verifySignature($this->request->post, $this->config->get("paytm_merchant_key"), $post_checksum);
+		if($isValidChecksum === true){
+			$order_id = !empty($this->request->post['ORDERID'])? PaytmHelper::getOrderId($this->request->post['ORDERID']) : 0;
+			$this->load->model('checkout/order');
+			$order_info = $this->model_checkout_order->getOrder($order_id);
+			if($this->request->post['STATUS']=='TXN_SUCCESS'){
+				$this->addOrderHistory($order_id, $this->config->get('paytm_order_success_status_id'));
+			}
+			else{
+				$this->addOrderHistory($order_id, $this->config->get('paytm_order_failed_status_id'));
+			}
+		echo 'webhook received';
+		} else {
+			echo 'Something went wrong';
+		}
+	}
+
 	public function callback(){
+		print_r($this->request->post);die;
 
 		// load language and model
 		$this->load->model('extension/payment/paytm');

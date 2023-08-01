@@ -19,19 +19,22 @@ $_['text_response_error']					= 'Something went wrong. Please again';
 $_['text_developer_docs'] 		            = 'Developer Docs';
 $_['text_curl_disabled']					= 'cURL is not enabled properly. Please verify.';
 $_['text_production']						= 'Production';
-$_['text_staging']							= 'Staging';
+$_['text_staging']							= 'Test/Staging';
+
+$_['text_staging_website']					= 'WEBSTAGING';
+$_['text_production_website']				= 'DEFAULT';
 
 // Button
 $_['button_fetch_status']					= "Fetch Status";
 
 // Entry
-$_['entry_merchant_id']						= 'Merchant ID';
+$_['entry_merchant_id']						= 'Test/Production MID';
 $_['entry_merchant_id_help']				= 'Enter your Merchant ID provided by Paytm';
 
-$_['entry_merchant_key']					= 'Merchant Key';
+$_['entry_merchant_key']					= 'Test/Production Secret Key';
 $_['entry_merchant_key_help']				= 'Enter your Merchant Key provided by Paytm';
 
-$_['entry_website']							= 'Website Name';
+$_['entry_website']							= 'Website (Provided by Paytm)';
 $_['entry_website_help']					= 'Enter your Website Name provded by Paytm';
 
 $_['entry_industry_type']					= 'Industry Type';
@@ -68,3 +71,21 @@ $_['error_website'] 						= 'Website Required!';
 $_['error_industry_type'] 					= 'Industry Type Required!';
 $_['error_environment'] 					= 'Environment Required!';
 $_['error_curl_warning'] 					= 'Your server is not getting to connect with us. Please contact to Paytm Support.';
+
+//Webhook 
+$_['entry_webhook']							= 'Enable Webhook';
+$_['entry_webhook_help']					= 'Enable Paytm Webhook';
+
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+$host = $_SERVER['HTTP_HOST'];
+$currentURL = $protocol . $host . $_SERVER['REQUEST_URI'];
+$finalURL = strstr($currentURL, '&', true); 
+$webhookURL = str_replace('admin/', '', $finalURL);
+$_['base_url_for_paytm_webhook']			= $webhookURL.'/webhook';
+$_['WEBHOOK_STAGING_URL']					=  "https://boss-stage-ext.paytm.com/";
+$_['WEBHOOK_PRODUCTION_URL']				= "https://boss-ext.paytm.in/";
+
+
+
+
+
