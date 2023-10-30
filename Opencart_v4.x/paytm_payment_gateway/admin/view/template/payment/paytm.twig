@@ -111,7 +111,14 @@
                     </select>
                   </div>
                 </div>
-               
+                <div class="row mb-3">
+                  <label for="input-status" class="col-sm-2 col-form-label">{{ entry_status }}</label>
+                  <div class="col-sm-10">
+                    <div class="form-check form-switch form-switch-lg">
+                      <input type="hidden" name="payment_paytm_status" value="0"/> <input type="checkbox" name="payment_paytm_status" value="1" id="input-status" class="form-check-input"{% if payment_paytm_status %} checked{% endif %}/>
+                    </div>
+                  </div>
+                </div>
                 <div class="row mb-3">
                   <label for="input-sort-order" class="col-sm-2 col-form-label">{{ entry_sort_order }}</label>
                   <div class="col-sm-10">
@@ -169,15 +176,7 @@
 
                     <label>{{base_url_for_paytm_webhook}}</label>
                   </div>
-                </div> 
-                 <div class="row mb-3">
-                  <label for="input-status" class="col-sm-2 col-form-label">{{ entry_status }}</label>
-                  <div class="col-sm-10">
-                    <div class="form-check form-switch form-switch-lg" id="toggle-btn">
-                      <input type="hidden" name="payment_paytm_status" value="0"/> <input type="checkbox" name="payment_paytm_status" value="1" id="input-status" class="form-check-input"{% if payment_paytm_status %} checked{% endif %}/>
-                    </div>
-                  </div>
-                </div>                                                                             
+                </div>                                                                              
               </fieldset>            
             </div>
             <div id="tab-report" class="tab-pane">
@@ -205,18 +204,5 @@ $(function() {
         $('input[name=payment_paytm_is_webhook_triggered]').val(0);
       }
     });
-
-    $('#input-status').change(function() {
-      if(!$(this).is(':checked')) {
-        if(!confirm("Are you sure you want to disable Paytm Payment Gateway, you will no longer be able to accept payments through us?")){
-            $('#input-status').prop('checked',true);
-        }
-        
-      
-    } 
-    
-  });
-
-
 });
 </script>

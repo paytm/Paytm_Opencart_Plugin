@@ -31,7 +31,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		$paramData = array('amount' => $amount, 'order_id' => $order_id, 'cust_id' => $cust_id, 'email' => $email, 'mobile_no' => $mobile_no);
 
 		$data = $this->blinkCheckoutSend($paramData);
-		$data['srcUrl'] = str_replace('MID',$this->config->get('payment_paytm_merchant_id'), PaytmHelper::getPaytmURL(PaytmConstants::CHECKOUT_JS_URL, $this->config->get('payment_paytm_environment')));
+		$data['srcUrl'] = str_replace('MID',$this->config->get('payment_paytm_merchant_id'), PaytmHelper::getPaytmURL(PaytmConstants::CHECKOUT_JS_URL, $this->config->get('payment_paytm_environment'),$this->config->get('payment_paytm_merchant_id')));
 		
 		$data['button_confirm']			= $this->language->get('button_confirm');
 		
@@ -43,7 +43,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 	}
 
 	private function blinkCheckoutSend($paramData = array()){
-		$apiURL = PaytmHelper::getPaytmURL(PaytmConstants::INITIATE_TRANSACTION_URL, $this->config->get('payment_paytm_environment')) . '?mid='.$this->config->get('payment_paytm_merchant_id').'&orderId='.$paramData['order_id'];
+		$apiURL = PaytmHelper::getPaytmURL(PaytmConstants::INITIATE_TRANSACTION_URL, $this->config->get('payment_paytm_environment'),$this->config->get('payment_paytm_merchant_id')) . '?mid='.$this->config->get('payment_paytm_merchant_id').'&orderId='.$paramData['order_id'];
 		$paytmParams = array();
 
 		$paytmParams["body"] = array(
@@ -170,7 +170,7 @@ class ControllerExtensionPaymentPaytm extends Controller {
 							$retry = 1;
 							do{
 								$postData = 'JsonData='.urlencode(json_encode($reqParams));
-								$resParams = PaytmHelper::executecUrl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->config->get('payment_paytm_environment')), $postData);
+								$resParams = PaytmHelper::executecUrl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->config->get('payment_paytm_environment'),$this->config->get('payment_paytm_merchant_id')), $postData);
 								$retry++;
 							} while(!$resParams['STATUS'] && $retry < PaytmConstants::MAX_RETRY_COUNT);
 							/* number of retries untill cURL gets success */

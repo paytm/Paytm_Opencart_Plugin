@@ -71,7 +71,7 @@ class Paytm extends \Opencart\System\Engine\Controller {
 	}
 
 	public function save(): void {
-		$json = [];
+		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') ) {
 			// Code for webhook
 			$PaytmChecksum = new PaytmChecksum();
@@ -96,10 +96,8 @@ class Paytm extends \Opencart\System\Engine\Controller {
 		                            "paymentNotificationUrl" => $webhookUrl
 		                          );
 		                $paytmParamsJson = json_encode($paytmParams, JSON_UNESCAPED_SLASHES);
-		               
 		                $generateSignature = $PaytmChecksum->generateSignature($paytmParamsJson, $this->config->get('payment_paytm_mkey'));
 		                $curl = curl_init();
-
 
 		                curl_setopt_array($curl, array(
 		                CURLOPT_URL => $url.'api/v1/external/putMerchantInfo', 
@@ -118,24 +116,13 @@ class Paytm extends \Opencart\System\Engine\Controller {
 		                ));
 
 		                $response = curl_exec($curl);
-		                $res = (array)json_decode($response);
-	                    if (!empty($res ) && isset($res['success'])) {
-					        $json =[];
-					    } elseif (isset($res['E_400'])) {
-				             $json =[];
-					    }else if(isset($res['BO_411'])){
-					    	  $json['error'] = "Something went wrong while configuring webhook. Please login to Paytm Dashboard to configure.";
-				    	}else {
-					        $json['error'] = "Something went wrong while configuring webhook. Please login to Paytm Dashboard to configure.";
-					    }
-					    
-					    
+		                $res = json_decode($response);    
 					}
 				}
 
 			$this->load->language('extension/paytm_payment_gateway/payment/paytm');
 
-		
+			$json = [];
 
 			if (!$this->user->hasPermission('modify', 'extension/paytm_payment_gateway/payment/paytm')) {
 				$json['error'] = $this->language->get('error_permission');
@@ -149,7 +136,7 @@ class Paytm extends \Opencart\System\Engine\Controller {
 				$json['error'] = $this->language->get('error_environment');
 			}
 
-			if (empty($json)) {
+			if (!$json) {
 				$this->load->model('setting/setting');
 
 				$this->model_setting_setting->editSetting('payment_paytm', $this->request->post);

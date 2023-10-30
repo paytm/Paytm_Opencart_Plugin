@@ -48,7 +48,7 @@ class Paytm extends \Opencart\System\Engine\Controller {
 				$data['orderId'] = $blinkData['orderId'];
 				$data['amount'] = $blinkData['amount'];
 				$data['txnToken'] = $blinkData['txnToken'];	
-				$data['jsUrl'] = str_replace('MID',$this->config->get('payment_paytm_mid'), $PaytmHelper->getPaytmURL($PaytmConstants::CHECKOUT_JS_URL, $this->config->get('payment_paytm_environment')));
+				$data['jsUrl'] = str_replace('MID',$this->config->get('payment_paytm_mid'), $PaytmHelper->getPaytmURL($PaytmConstants::CHECKOUT_JS_URL, $this->config->get('payment_paytm_environment'),$this->config->get('payment_paytm_mid')));
 
 					return $this->load->view('extension/paytm_payment_gateway/payment/stored', $data);
 		}
@@ -194,7 +194,7 @@ class Paytm extends \Opencart\System\Engine\Controller {
 							$retry = 1;
 							do{
 								$postData = 'JsonData='.urlencode(json_encode($reqParams));
-								$resParams = PaytmHelper::executecUrl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->config->get('payment_paytm_environment')), $postData);
+								$resParams = PaytmHelper::executecUrl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->config->get('payment_paytm_environment'),$this->config->get('payment_paytm_mid')), $postData);
 								$retry++;
 							} while(!$resParams['STATUS'] && $retry < PaytmConstants::MAX_RETRY_COUNT);
 							/* number of retries untill cURL gets success */
@@ -285,7 +285,7 @@ class Paytm extends \Opencart\System\Engine\Controller {
 		$PaytmHelper = new PaytmHelper();
 		$PaytmConstants = new PaytmConstants();
 		$PaytmChecksum = new PaytmChecksum();
-		$apiURL =  $PaytmHelper->getPaytmURL($PaytmConstants::INITIATE_TRANSACTION_URL, $this->config->get('payment_paytm_environment')) . '?mid='.$this->config->get('payment_paytm_mid').'&orderId='.$paramData['order_id'];
+		$apiURL =  $PaytmHelper->getPaytmURL($PaytmConstants::INITIATE_TRANSACTION_URL, $this->config->get('payment_paytm_environment'),$this->config->get('payment_paytm_mid')) . '?mid='.$this->config->get('payment_paytm_mid').'&orderId='.$paramData['order_id'];
 		$paytmParams = array();
 
 		$paytmParams["body"] = array(
