@@ -159,10 +159,8 @@ class Paytm extends \Opencart\System\Engine\Controller {
 					exit;
 				} 
 				if($this->config->get('payment_paytm_approved_status_id')==$order_info['order_status_id']){
-					$this->model_checkout_order->addHistory($order_id, $this->config->get('payment_paytm_approved_status_id'), '', true);
 					$this->response->redirect($this->url->link('checkout/success', 'language=' . $this->config->get('config_language'), true));
 				}else{
-					$this->model_checkout_order->addHistory($order_id, $this->config->get('payment_paytm_failed_status_id'), '', true);
 					$this->response->redirect($this->url->link('checkout/failure', 'language=' . $this->config->get('config_language'), true));	
 				}
 			}
