@@ -86,6 +86,6 @@ $host = $_SERVER['HTTP_HOST'];
 $currentURL = $protocol . $host . $_SERVER['REQUEST_URI'];
 $finalURL = strstr($currentURL, '&', true); 
 $webhookURL = str_replace('admin/', '', $finalURL);
-$_['base_url_for_paytm_webhook']			= $webhookURL.'/webhook';
+$_['base_url_for_paytm_webhook']			= $webhookURL.'/callback&webhook=yes';
 $_['WEBHOOK_STAGING_URL']					=  "https://boss-stage-ext.paytm.com/";
-$_['WEBHOOK_PRODUCTION_URL']				= "https://boss-ext.paytm.in/";
+$_['WEBHOOK_PRODUCTION_URL']				= "https://boss-ext.paytm.in/";     

@@ -22,6 +22,7 @@ $_['text_failure_wait']             = '<b><span style="color: #FF0000">Please wa
 $_['text_reason']                   = ' Reason: ';
 $_['text_transaction_id']           = 'Transaction ID: %s';
 $_['text_paytm_order_id']           = 'Paytm Order ID: %s';
+$_['text_paytm_response']           = 'Paytm Response: %s';
 
 
 // Error

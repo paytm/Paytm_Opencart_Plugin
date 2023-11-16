@@ -118,129 +118,143 @@ class ControllerExtensionPaymentPaytm extends Controller {
 	/**
 	* paytm sends response to callback
 	*/
-	public function callback(){
-
-		// load language and model
+	public function callback(){  
+	   
 		$this->load->model('extension/payment/paytm');
 		$this->load->language('extension/payment/paytm');
-
 		$data['title'] 				= sprintf($this->language->get('heading_title'), $this->config->get('config_name'));
 		$data['language'] 			= $this->language->get('code');
 		$data['direction'] 			= $this->language->get('direction');
 		$data['heading_title'] 		= sprintf($this->language->get('heading_title'), $this->config->get('config_name'));
 		
-		$data['payment_status'] = (!empty($this->request->post['STATUS']))? $this->request->post['STATUS'] : 'TXN_FAILURE';
+		$order_id = !empty($this->request->post['ORDERID'])? PaytmHelper::getOrderId($this->request->post['ORDERID']) : 0;
+		$this->load->model('checkout/order');
+		$order_info = $this->model_checkout_order->getOrder($order_id);
 
-		if(!empty($this->request->post['RESPMSG'])){
-			$data['text_response'] 	= sprintf($this->language->get('text_response'), $this->request->post['RESPMSG']);
-		} else {
-			$data['text_response'] 	= sprintf($this->language->get('text_response'), '');
-		}			
-		if(!empty($this->request->post)){
-			
-			if(!empty($this->request->post['CHECKSUMHASH'])){
-				$post_checksum = $this->request->post['CHECKSUMHASH'];
-				unset($this->request->post['CHECKSUMHASH']);	
-			}else{
-				$post_checksum = "";
-			}
-		
-			$isValidChecksum = PaytmChecksum::verifySignature($this->request->post, $this->config->get("payment_paytm_merchant_key"), $post_checksum);
+		if(!empty($order_info)){  
+			if($this->config->get('payment_paytm_order_success_status_id')!==$order_info['order_status_id'] && $this->config->get('payment_paytm_order_failed_status_id')!==$order_info['order_status_id']){  
 
-			if($isValidChecksum === true){
+				$data['payment_status'] = (!empty($this->request->post['STATUS']))? $this->request->post['STATUS'] : 'TXN_FAILURE';
 
-				$order_id = !empty($this->request->post['ORDERID'])? PaytmHelper::getOrderId($this->request->post['ORDERID']) : 0;
+				if(!empty($this->request->post['RESPMSG'])){
+					$data['text_response'] 	= sprintf($this->language->get('text_response'), $this->request->post['RESPMSG']);
+				} else {
+					$data['text_response'] 	= sprintf($this->language->get('text_response'), '');
+				}			
+				if(!empty($this->request->post)){
+					if(!empty($this->request->post['CHECKSUMHASH'])){
+						$post_checksum = $this->request->post['CHECKSUMHASH'];
+						unset($this->request->post['CHECKSUMHASH']);	
+					}else{
+						$post_checksum = "";
+					}
 				
-				$this->load->model('checkout/order');
-				$order_info = $this->model_checkout_order->getOrder($order_id);
-
-				if($order_info) {
-
-					if(!empty($this->request->post['STATUS'])) {
-					
-						$reqParams = array(
-											"MID" 		=> $this->config->get('payment_paytm_merchant_id'),
-											"ORDERID" 	=> $this->request->post['ORDERID']
-										);
-						
-						$reqParams['CHECKSUMHASH'] = PaytmChecksum::generateSignature($reqParams, $this->config->get("payment_paytm_merchant_key"));
-						
-						if($data['payment_status'] == 'TXN_SUCCESS' || $data['payment_status'] == 'PENDING'){
-							/* number of retries untill cURL gets success */
-							$retry = 1;
-							do{
-								$postData = 'JsonData='.urlencode(json_encode($reqParams));
-								$resParams = PaytmHelper::executecUrl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->config->get('payment_paytm_environment'),$this->config->get('payment_paytm_merchant_id')), $postData);
-								$retry++;
-							} while(!$resParams['STATUS'] && $retry < PaytmConstants::MAX_RETRY_COUNT);
-							/* number of retries untill cURL gets success */
-						}
-
-						if(!isset($resParams['STATUS'])){
-							$resParams = $this->request->post;
-						}
-						
-						$data['payment_status'] = (!empty($resParams['STATUS']))? $resParams['STATUS'] : $data['payment_status'];
-			
-						/* save paytm response in db */
-						if(PaytmConstants::SAVE_PAYTM_RESPONSE && !empty($resParams['STATUS'])){
-							$this->model_extension_payment_paytm->saveTxnResponse($resParams, PaytmHelper::getOrderId($resParams['ORDERID']));
-						}
-						/* save paytm response in db */
-
-						// if curl failed to fetch response
-						if(!isset($resParams['STATUS'])){
-							$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_failed_status_id'));
-
-							$this->session->data['error'] = $this->language->get('error_server_communication');
-							$this->preRedirect($data);
-
-						} else {
-							if($resParams['STATUS'] == 'TXN_SUCCESS'){
-								$comment = sprintf($this->language->get('text_transaction_id'), $resParams['TXNID']) .'<br/>'. sprintf($this->language->get('text_paytm_order_id'), $resParams['ORDERID']);
-
-								$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_success_status_id'), $comment);
-								$this->preRedirect($data);
-
-							}else if($resParams['STATUS'] == 'PENDING'){
-								$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_pending_status_id'));
-
-								$this->session->data['error'] = $this->language->get('text_pending');
-								if(isset($resParams['RESPMSG']) && !empty($resParams['RESPMSG'])){
-									$this->session->data['error'] .= $this->language->get('text_reason').$resParams['RESPMSG'];
+					$isValidChecksum = PaytmChecksum::verifySignature($this->request->post, $this->config->get("payment_paytm_merchant_key"), $post_checksum);
+					if($isValidChecksum === true){  
+							if(!empty($this->request->post['STATUS'])) {
+								$reqParams = array(
+													"MID" 		=> $this->config->get('payment_paytm_merchant_id'),
+													"ORDERID" 	=> $this->request->post['ORDERID']
+												);
+								
+								$reqParams['CHECKSUMHASH'] = PaytmChecksum::generateSignature($reqParams, $this->config->get("payment_paytm_merchant_key"));
+								
+								if($data['payment_status'] == 'TXN_SUCCESS' || $data['payment_status'] == 'PENDING'){
+									/* number of retries untill cURL gets success */
+									$retry = 1;
+									do{
+										$postData = 'JsonData='.urlencode(json_encode($reqParams));
+										$resParams = PaytmHelper::executecUrl(PaytmHelper::getPaytmURL(PaytmConstants::ORDER_STATUS_URL, $this->config->get('payment_paytm_environment'),$this->config->get('payment_paytm_merchant_id')), $postData);
+										$retry++;
+									} while(!$resParams['STATUS'] && $retry < PaytmConstants::MAX_RETRY_COUNT);
+									/* number of retries untill cURL gets success */
 								}
-								$this->preRedirect($data);
+								if(!isset($resParams['STATUS'])){
+									$resParams = $this->request->post;
+								}
+								
+								$data['payment_status'] = (!empty($resParams['STATUS']))? $resParams['STATUS'] : $data['payment_status'];
+					
+								/* save paytm response in db */
+								if(PaytmConstants::SAVE_PAYTM_RESPONSE && !empty($resParams['STATUS'])){
+									$this->model_extension_payment_paytm->saveTxnResponse($resParams, PaytmHelper::getOrderId($resParams['ORDERID']));
+								}
+								/* save paytm response in db */
+		
+								// if curl failed to fetch response
+								if(!isset($resParams['STATUS'])){
+									$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_failed_status_id'));
+		
+									$this->session->data['error'] = $this->language->get('error_server_communication');
+									$this->preRedirect($data);
+		
+								} else {
+									if($resParams['STATUS'] == 'TXN_SUCCESS'){
+										$comment = sprintf($this->language->get('text_transaction_id'), $resParams['TXNID']) .'<br/>'. sprintf($this->language->get('text_paytm_order_id'), $resParams['ORDERID']) .'<br/>'. sprintf($this->language->get('text_paytm_response'), $resParams['RESPMSG']);
 
-							}else {
-								$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_failed_status_id'));
-
+										$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_success_status_id'), $comment);
+										$this->preRedirect($data);
+		
+									}else if($resParams['STATUS'] == 'PENDING'){
+										$comment = sprintf($this->language->get('text_paytm_order_id'), $resParams['ORDERID']).'<br/>'. sprintf($this->language->get('text_paytm_response'), $resParams['RESPMSG']);
+										$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_pending_status_id'), $comment);
+		
+										$this->session->data['error'] = $this->language->get('text_pending');
+										if(isset($resParams['RESPMSG']) && !empty($resParams['RESPMSG'])){
+											$this->session->data['error'] .= $this->language->get('text_reason').$resParams['RESPMSG'];
+										}
+										$this->preRedirect($data);
+		
+									}else {
+										$comment = sprintf($this->language->get('text_transaction_id'), $resParams['TXNID']) .'<br/>'. sprintf($this->language->get('text_paytm_order_id'), $resParams['ORDERID']).'<br/>'. sprintf($this->language->get('text_paytm_response'), $resParams['RESPMSG']);
+										$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_failed_status_id'), $comment);
+		
+										$this->session->data['error'] = $this->language->get('text_failure');
+										if(isset($resParams['RESPMSG']) && !empty($resParams['RESPMSG'])){
+											$this->session->data['error'] .= $this->language->get('text_reason').$resParams['RESPMSG'];
+										}
+										$this->preRedirect($data);
+									}
+								}
+		
+							} else { 
 								$this->session->data['error'] = $this->language->get('text_failure');
-								if(isset($resParams['RESPMSG']) && !empty($resParams['RESPMSG'])){
-									$this->session->data['error'] .= $this->language->get('text_reason').$resParams['RESPMSG'];
+								if(isset($this->request->post['RESPMSG']) && !empty($this->request->post['RESPMSG'])){
+									$this->session->data['error'] .= $this->language->get('text_reason').$this->request->post['RESPMSG'];
 								}
 								$this->preRedirect($data);
 							}
-						}
-
 					} else {
-				
-						$this->session->data['error'] = $this->language->get('text_failure');
-						if(isset($this->request->post['RESPMSG']) && !empty($this->request->post['RESPMSG'])){
-							$this->session->data['error'] .= $this->language->get('text_reason').$this->request->post['RESPMSG'];
-						}
+						$this->session->data['error'] = $this->language->get('error_checksum_mismatch');
 						$this->preRedirect($data);
 					}
-
-				} else {
-					$this->session->data['error'] = $this->language->get('error_invalid_order');
+				}else{
+					$this->preRedirect($data);
+				}
+				if(isset($_GET['webhook']) && $_GET['webhook'] == "yes"){ 
+					echo "webhook";
+					exit;
+				}
+			}else{
+				if(isset($_GET['webhook']) && $_GET['webhook'] == "yes"){ 
+					echo "webhook received";
+					exit;
+				} 
+				if($this->config->get('payment_paytm_order_success_status_id')==$order_info['order_status_id']){
+					$this->preRedirect($data);
+				}else{ 
+					$this->session->data['error'] = $this->language->get('text_failure');
+					if(isset($resParams['RESPMSG']) && !empty($resParams['RESPMSG'])){
+						$this->session->data['error'] .= $this->language->get('text_reason').$resParams['RESPMSG'];
+					}
 					$this->preRedirect($data);
 				}
 
-			} else {
-				$this->session->data['error'] = $this->language->get('error_checksum_mismatch');
-				$this->preRedirect($data);
 			}
-		}else{
+		}else {
+			$this->session->data['error'] = $this->language->get('error_invalid_order');
+			$comment = sprintf($this->language->get('text_transaction_id'), $resParams['TXNID']) .'<br/>'. sprintf($this->language->get('text_paytm_order_id'), $resParams['ORDERID']).'<br/>'. sprintf($this->language->get('text_paytm_response'), $resParams['RESPMSG']);
+			$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_failed_status_id'), $comment);
 			$this->preRedirect($data);
 		}		
 	}
@@ -252,31 +266,6 @@ class ControllerExtensionPaymentPaytm extends Controller {
 		}
 	}
 
-	public function webhook(){
-			if(!empty($this->request->post['CHECKSUMHASH'])){
-				$post_checksum = $this->request->post['CHECKSUMHASH'];
-				unset($this->request->post['CHECKSUMHASH']);	
-			}else{
-				$post_checksum = "";
-			}		
-		$isValidChecksum = PaytmChecksum::verifySignature($this->request->post, $this->config->get("payment_paytm_merchant_key"), $post_checksum);
-		if($isValidChecksum === true){		
-		$order_id = !empty($this->request->post['ORDERID']) ? PaytmHelper::getOrderId($this->request->post['ORDERID']) : 0;
-		$this->load->model('checkout/order');
-		$order_info = $this->model_checkout_order->getOrder($order_id);
-			if($this->request->post['STATUS']=='TXN_SUCCESS'){
-				$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_success_status_id'));
-			}
-			else{
-				$this->addOrderHistory($order_id, $this->config->get('payment_paytm_order_failed_status_id'));
-			}
-			echo 'webhook received';
-		} else {
-			echo 'Something went wrong';
-		}
-		
-			
-	}
 
 	/**
 	* show template while response 
