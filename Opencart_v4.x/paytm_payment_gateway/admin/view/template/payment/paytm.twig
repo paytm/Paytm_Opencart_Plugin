@@ -44,14 +44,14 @@
                   <label for="input-order-status" class="col-sm-2 col-form-label">{{ entry_mid }}</label>
                   <div class="col-sm-10">
                     <input type="text" name="payment_paytm_mid" value="{{ payment_paytm_mid }}" placeholder="{{ entry_mid }}" id="input-order-status" class="form-control"/>
-                    <span>Based on the selected Environment Mode, copy the relevant Merchant ID for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
+                    <span>Based on the selected Environment Mode, copy the relevant Merchant ID for test or production environment available on <a href="https://dashboard.paytmpayments.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
                   </div>
                 </div>  
                 <div class="row mb-3">
                   <label for="input-order-status" class="col-sm-2 col-form-label">{{ entry_mkey }}</label>
                   <div class="col-sm-10">
                     <input type="text" name="payment_paytm_mkey" value="{{ payment_paytm_mkey }}" placeholder="{{ entry_mkey }}" id="input-order-status" class="form-control"/>
-                    <span>Based on the selected Environment Mode, copy the Merchant Key for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
+                    <span>Based on the selected Environment Mode, copy the Merchant Key for test or production environment available on <a href="https://dashboard.paytmpayments.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
                   </div>
                 </div>                                  
                 <div class="row mb-3">
@@ -172,7 +172,7 @@
                       <option value="0"{% if not payment_paytm_webhook %} selected{% endif %}>{{ text_disable }}</option>
                       <option value="1"{% if payment_paytm_webhook %} selected{% endif %}>{{ text_enable }}</option>
                     </select>
-                    <span>Enable Paytm Webhook <a href="https://dashboard.paytm.com/next/webhook-url">here</a> with the URL listed below.<br></span>
+                    <span>Enable Paytm Webhook <a href="https://dashboard.paytmpayments.com/next/webhook-url">here</a> with the URL listed below.<br></span>
 
                     <label>{{base_url_for_paytm_webhook}}</label>
                   </div>

@@ -57,7 +57,7 @@
 							<?php if ($error_merchant_id) { ?>
 							<div class="text-danger"><?php echo $error_merchant_id; ?></div>
 							<?php } ?>
-							<span>Based on the selected Environment Mode, copy the relevant Merchant ID for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
+							<span>Based on the selected Environment Mode, copy the relevant Merchant ID for test or production environment available on <a href="https://dashboard.paytmpayments.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
 						</div>
 					</div>
 					<div class="form-group required">
@@ -69,7 +69,7 @@
 							<?php if ($error_merchant_key) { ?>
 							<div class="text-danger"><?php echo $error_merchant_key; ?></div>
 							<?php } ?>
-							<span>Based on the selected Environment Mode, copy the Merchant Key for test or production environment available on <a href="https://dashboard.paytm.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
+							<span>Based on the selected Environment Mode, copy the Merchant Key for test or production environment available on <a href="https://dashboard.paytmpayments.com/next/apikeys" target="_blank">Paytm dashboard</a>.</span>
 						</div>
 					</div>
 					<div class="form-group required">
@@ -204,7 +204,7 @@
 								<option value="0" selected="selected"><?php echo $text_disabled; ?></option>
 								<?php } ?>
 							</select>
-							<span>Enable Paytm Webhook <a href="https://dashboard.paytm.com/next/webhook-url">here</a> with the URL listed below.<br> <?php echo $base_url_for_paytm_webhook?></span>
+							<span>Enable Paytm Webhook <a href="https://dashboard.paytmpayments.com/next/webhook-url">here</a> with the URL listed below.<br> <?php echo $base_url_for_paytm_webhook?></span>
 						</div>
 					</div>
 					<div class="form-group">

@@ -1,8 +1,8 @@
 <?php
 
 class PaytmConstants{
-	CONST PRODUCTION_HOST						= "https://securegw.paytm.in/";
-	CONST STAGING_HOST							= "https://securegw-stage.paytm.in/";
+	CONST PRODUCTION_HOST						= "https://secure.paytmpayments.com/";
+	CONST STAGING_HOST							= "https://securestage.paytmpayments.com/";
 
 	CONST ORDER_PROCESS_URL						= "order/process";
 	CONST ORDER_STATUS_URL						= "order/status";
@@ -19,13 +19,13 @@ class PaytmConstants{
 	CONST CONNECT_TIMEOUT						= 10;
 	CONST TIMEOUT								= 10;
 
-	CONST LAST_UPDATED							= "20230116";
-	CONST PLUGIN_VERSION						= "2.1";
+	CONST LAST_UPDATED							= "20241028";
+	CONST PLUGIN_VERSION						= "2.2";
 
 	CONST CUSTOM_CALLBACK_URL					= "";
 	CONST IS_BLINK_SUPPORTED					= true;
-	const COLORED_LOGO_URL 						= "https://staticpg.paytm.in/pg_plugins_logo/paytm_logo_paymodes.svg";
-	const WHITE_LOGO_URL						= "https://staticpg.paytm.in/pg_plugins_logo/paytm_logo_invert.svg";
+	const COLORED_LOGO_URL 						= "https://staticpg.paytmpayments.com/pg_plugins_logo/paytm_logo_paymodes.svg";
+	const WHITE_LOGO_URL						= "https://staticpg.paytmpayments.com/pg_plugins_logo/paytm_logo_invert.svg";
 }
 
 ?>

@@ -7,7 +7,7 @@ $_['text_payment']							= 'Payment';
 $_['text_extension']						= 'Extension';
 $_['text_payments']							= 'Payments';
 $_['text_success']							= 'Success: You have modified paytm account details!';
-$_['text_paytm']							= '<img src="https://staticpg.paytm.in/pg_plugins_logo/paytm_logo_paymodes.svg" alt="Paytm" title="Paytm" width="240px" />';
+$_['text_paytm']							= '<img src="https://staticpg.paytmpayments.com/pg_plugins_logo/paytm_logo_paymodes.svg" alt="Paytm" title="Paytm" width="240px" />';
 $_['text_edit']								= 'Edit Paytm Payments';
 $_['text_opencart_version']					= 'Opencart Version';
 $_['text_curl_version']						= 'cURL Version';
@@ -82,8 +82,8 @@ $currentURL = $protocol . $host . $_SERVER['REQUEST_URI'];
 $finalURL = strstr($currentURL, '&', true); 
 $webhookURL = str_replace('admin/', '', $finalURL);
 $_['base_url_for_paytm_webhook']			= $webhookURL.'/webhook';
-$_['WEBHOOK_STAGING_URL']					=  "https://boss-stage-ext.paytm.com/";
-$_['WEBHOOK_PRODUCTION_URL']				= "https://boss-ext.paytm.in/";
+$_['WEBHOOK_STAGING_URL']					=  "https://boss-stage-ext.paytmpayments.com/";
+$_['WEBHOOK_PRODUCTION_URL']				= "https://boss-ext.paytmpayments.com/";
 
 
 

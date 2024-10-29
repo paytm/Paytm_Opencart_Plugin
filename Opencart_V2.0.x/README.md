@@ -1,6 +1,6 @@
 # OpenCart 2.x Paytm Payment Gateway
 
-![Logo](https://staticpg.paytm.in/pg_plugins_logo/paytm_logo_paymodes.svg)
+![Logo](https://staticpg.paytmpayments.com/pg_plugins_logo/paytm_logo_paymodes.svg)
 
 
 ## Description

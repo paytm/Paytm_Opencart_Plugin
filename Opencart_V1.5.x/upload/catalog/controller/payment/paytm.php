@@ -63,7 +63,7 @@ class ControllerPaymentPaytm extends Controller {
 
 		/*
 		* Generate checksum by parameters we have in body
-		* Find your Merchant Key in your Paytm Dashboard at https://dashboard.paytm.com/next/apikeys 
+		* Find your Merchant Key in your Paytm Dashboard at https://dashboard.paytmpayments.com/next/apikeys 
 		*/
 		$checksum = PaytmChecksum::generateSignature(json_encode($paytmParams["body"], JSON_UNESCAPED_SLASHES), $this->config->get('paytm_merchant_key'));
 

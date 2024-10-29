@@ -57,6 +57,6 @@ $_['error_environment'] 					= 'Environment Required!';
 $_['error_curl_warning'] 					= 'Your server is not getting to connect with us. Please contact to Paytm Support.';
 
 $_['base_url_for_paytm_webhook']  = HTTP_CATALOG.'index.php?route=extension/paytm_payment_gateway/payment/paytm.callback&webhook=yes';
-$_['WEBHOOK_STAGING_URL']					=  "https://boss-stage-ext.paytm.com/";
-$_['WEBHOOK_PRODUCTION_URL']				= "https://boss-ext.paytm.in/";
-$_['text_paytm'] = '<a href="https://business.paytm.com/docs"><img src="https://staticpg.paytm.in/pg_plugins_logo/paytm_logo_paymodes.svg"></a>';
+$_['WEBHOOK_STAGING_URL']					=  "https://boss-stage-ext.paytmpayments.com/";
+$_['WEBHOOK_PRODUCTION_URL']				= "https://boss-ext.paytmpayments.com/";
+$_['text_paytm'] = '<a href="https://business.paytm.com/docs"><img src="https://staticpg.paytmpayments.com/pg_plugins_logo/paytm_logo_paymodes.svg"></a>';

@@ -1,8 +1,8 @@
 <?php
 namespace PaytmConstants;
 class PaytmConstants{
-	CONST PRODUCTION_HOST						= "https://securegw.paytm.in/";
-	CONST STAGING_HOST							= "https://securegw-stage.paytm.in/";
+	CONST PRODUCTION_HOST						= "https://secure.paytmpayments.com/";
+	CONST STAGING_HOST							= "https://securestage.paytmpayments.com/";
 	CONST PRODUCTION_PPBL_HOST					= "https://securepg.paytm.in/";
 
     CONST PPBL = false;	
@@ -22,13 +22,13 @@ class PaytmConstants{
 	CONST CONNECT_TIMEOUT						= 10;
 	CONST TIMEOUT								= 10;
 
-	CONST LAST_UPDATED							= "20231110";
-	CONST PLUGIN_VERSION						= "1.0.2.";
+	CONST LAST_UPDATED							= "20241028";
+	CONST PLUGIN_VERSION						= "1.0.3";
 
 	CONST CUSTOM_CALLBACK_URL					= "";
 	CONST IS_BLINK_SUPPORTED					= true;
 
-	const COLORED_LOGO_URL = "https://staticpg.paytm.in/pg_plugins_logo/paytm_logo_paymodes.svg";
-	const WHITE_LOGO_URL = "https://staticpg.paytm.in/pg_plugins_logo/paytm_logo_invert.svg";
+	const COLORED_LOGO_URL = "https://staticpg.paytmpayments.com/pg_plugins_logo/paytm_logo_paymodes.svg";
+	const WHITE_LOGO_URL = "https://staticpg.paytmpayments.com/pg_plugins_logo/paytm_logo_invert.svg";
 }
 ?>
