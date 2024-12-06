@@ -118,8 +118,8 @@ class ControllerExtensionPaymentPaytm extends Controller {
 	}
 
 	public function callback(){
-		print_r($this->request->post);die;
-
+/* 		print_r($this->request->post);die;
+ */
 		// load language and model
 		$this->load->model('extension/payment/paytm');
 		$this->load->language('extension/payment/paytm');
